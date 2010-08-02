@@ -1,0 +1,13 @@
+<cfinclude template="badrequest.cfm" />
+<cfinclude template="create.cfm" />
+<cfinclude template="delete.cfm" />
+<cfinclude template="destroy.cfm" />
+<cfinclude template="edit.cfm" />
+<cfinclude template="filters.cfm" />
+<cfinclude template="list.cfm" />
+<cfinclude template="nested.cfm" />
+<cfinclude template="new.cfm" />
+<cfinclude template="onmissingmethod.cfm" />
+<cfinclude template="pagenotfound.cfm" />
+<cfinclude template="update.cfm" />
+<cfinclude template="view.cfm" />
