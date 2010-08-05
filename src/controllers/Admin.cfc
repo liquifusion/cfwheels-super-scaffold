@@ -2,10 +2,12 @@
 
 	<cffunction name="init" access="public" output="false" returntype="void">
 		<cfscript>
-			scaffoldAdmin(
-				  controllers=[ [ "settings", "states" ], [ "users", "roles", "permissions" ] ]
-			);
+			filters(through="$verifySessionExists");
+			usesLayout(template="/layouts/default", useDefault=false);
 		</cfscript>
+	</cffunction>
+	
+	<cffunction name="index" access="public" output="false" returntype="void">
 	</cffunction>
 	
 </cfcomponent>

@@ -25,23 +25,60 @@
 	<li>Guaranteed to work in IE 7-8, FF3.x, Safari 4-5 and Chrome 4-5.</li>
 </ul>
 
+<h3>Experimental Features</h3>
+
+<ul>
+	<li>Scaffold as your api! Just add .xml, .json, .csv or .xml to all URL that displays data and see what happens. (CF9 only)</li>
+</ul>
+
 <h2>WARNING</h2>
 
 <p>
-	If you do not like to follow <a href="http://cfwheels.org/docs/chapter/conventions">wheels conventions</a> in your database, this plugin is probably <strong><em><u>NOT for you</u></em></strong>.
+	If you do not like to follow <a href="http://cfwheels.org/docs/chapter/conventions">wheels conventions</a> in your application, this plugin is probably <strong><em><u>NOT for you</u></em></strong>.
 	On the other hand, if you do like following the conventions, this plugin will save your a shit load of time creating and admin interface
 	for your database.
 </p>
 
 <h2>Installation</h2>
 
+<p>Please follow the steps below to make sure you have a successful installation.</p>
+
+<h3>Step 1 - Fresh Install of Wheels 1.1</h3>
+
+<p>Please make sure you are installing this plugin in a fresh version of wheels 1.1 or greater. This plugin will not work with any verison of wheels before 1.1.</p>
+
+<h3>Step 2 - Dependencies</h3>
+
+<p>Make sure there are no warning errors in the debug information below for the super scaffold plugin. This plugin currently requires:</p>
+
+<ul>
+	<li><a href="http://cfwheels.org/plugins/listing/4">Asset Bundler</a></li>
+	<li><a href="http://cfwheels.org/plugins/listing/28">DB Migrate</a></li>
+	<li><a href="http://cfwheels.org/plugins/listing/10">Flash Helpers</a></li>
+	<li><a href="http://cfwheels.org/plugins/listing/6">Provides</a></li>
+	<li><a href="http://cfwheels.org/plugins/listing/7">Session Cache</a></li>
+	<li>Single Time Select</li>
+</ul>
+
+<p>Once you have the latest versions of these plugins installed, reload your app and move on to step three.</p>
+
+<h3>Step 3 - Database</h3>
+
+	<ol>
+		<li>Make sure you have a datasource setup in wheels.</li>
+		<li>Copy the folder plugins/superscaffold/db to the root of your application.</li>
+		<li>Go to the <a href="/rewrite.cfm?controller=wheels&action=wheels&view=plugins&name=dbmigrate">DB Migrate page</a> and run the migration.</li>
+	</ol>
+
+<h4>Step 4 - Click the Link</h4>
+
 <p>
-	Please make sure you are installing this plugin in a fresh version of wheels 1.1 or greater. In order for the plugin to fully work, you will need to click the
+	 In order for the plugin to fully work, you will need to click the
 	link below to add the necessary assets into your app. I know, I know, the list below is everything that is going to happen.
 </p>
 
 <ul>
-	<li>Your <code>config/app.cfm</code> file will be updated with a mapping to the controllers folder.</li>
+	<li>Your <code>config/app.cfm</code> file will be updated with an inlcude to <code>plugins/superscaffold/superscaffold/config/app.cfm</code>.</li>
 	<li>Your <code>config/routes.cfm</code> file will be updated with an inlcude to <code>plugins/superscaffold/superscaffold/config/routes.cfm</code> so the
 		the scaffolding routes are added to your application.</li>
 	<li>Your <code>events/onapplicationstart.cfm</code> file will be updated with an inlcude to <code>plugins/superscaffold/superscaffold/events/onapplicationstart.cfm</code> so the

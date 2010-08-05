@@ -7,9 +7,6 @@
 	<cfscript>
 		var loc = {};
 		var originalGenerateIncludeTemplatePath = core.$generateIncludeTemplatePath;
-		
-		if (!StructKeyExists(variables.$class, "superscaffold"))
-			return originalGenerateIncludeTemplatePath(argumentCollection=arguments);
 			
 		if (Len(application.wheels.webPath) && application.wheels.webPath != "/")
 			arguments.$alternateBaseTemplatePath = application.wheels.webPath & "/" & arguments.$alternateBaseTemplatePath;
@@ -38,6 +35,8 @@
 		if (!Len(loc.templatePath))
 		{
 			loc.templatePath = originalGenerateIncludeTemplatePath(argumentCollection=arguments);
+			if (!FileExists(ExpandPath(loc.templatePath)))
+				loc.templatePath = originalGenerateIncludeTemplatePath($name=arguments.$name, $type=arguments.$type, $controllerName=arguments.$controllerName, $baseTemplatePath=arguments.$alternateBaseTemplatePath);
 			if (!FileExists(ExpandPath(loc.templatePath)))
 				loc.templatePath = originalGenerateIncludeTemplatePath($name=arguments.$name, $type=arguments.$type, $controllerName="templates", $baseTemplatePath=arguments.$alternateBaseTemplatePath);
 			

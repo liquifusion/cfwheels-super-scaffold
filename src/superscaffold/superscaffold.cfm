@@ -1,6 +1,6 @@
 <cffunction name="scaffold" access="public" output="false" returntype="void" mixin="controller">
 	<cfargument name="modelName" type="string" required="true" hint="Model to use with this super scaffold controller" />
-	<cfargument name="label" type="string" required="false" hint="the label of the form. defaults to the pluralized model name" />
+	<cfargument name="label" type="string" required="false" hint="the default label for this area of the admin. defaults to the pluralized model name" />
 	<cfargument name="actions" type="string" required="false" hint="Define what actions are available from the list. Only actions present in the list will be available." />
 	<cfargument name="formats" type="string" required="false" hint="I define what formats can be requested from this super scaffold controller." />
 	<cfscript>
@@ -10,7 +10,7 @@
 		variables.$class.superScaffold = {};
 		
 		// translate actions
-		arguments.actions = ListAppend(arguments.actions, "list,search,pagenotfound");
+		arguments.actions = ListAppend(arguments.actions, "list,search,pagenotfound,accessdenied");
 		if (ListFindNoCase(arguments.actions, "create"))
 			arguments.actions = ListAppend(arguments.actions, "new");
 		if (ListFindNoCase(arguments.actions, "update"))
@@ -30,33 +30,16 @@
 		scaffoldCreate();
 		scaffoldUpdate();
 		scaffoldDelete();
-		scaffoldPermissions(roles="admin");
+		scaffoldRoles();
 		
-		// set a before filter to change around our action names
-		filters(through="$verifyScaffoldAccess,$setModel,$defaultRequiredParams");
+		filters(through="$verifySessionExists,$setModel,$defaultRequiredParams");
+		filters(through="$verifyScaffoldAccess", except="badRequest,pageNotFound");
 		
 		// setup our default layout for all super scaffold admin areas
-		usesLayout(template="/layouts/default", useDefault=false);
+		usesLayout(template="/layouts/default", ajax="/layouts/default.ajax", useDefault=false);
 		
 		// setup our provides plugin
 		provides(formats=arguments.formats);
-	</cfscript>
-</cffunction>
-
-<cffunction name="scaffoldAdmin" access="public" output="false" returntype="void" mixin="controller">
-	<cfargument name="controllers" type="array" required="true" />
-	<cfargument name="title" type="string" required="false" />
-	<cfargument name="developer" type="string" required="false" />
-	<cfargument name="developerLink" type="string" required="false" />
-	<cfargument name="copyrightStartYear" type="numeric" required="false" />
-	<cfscript>
-		var loc = {};
-		$args(args=arguments, name="scaffoldAdmin");
-		
-		variables.$class.superScaffold = {};
-		application.superScaffold = Duplicate(arguments);
-		// setup our default layout for all super scaffold admin areas
-		usesLayout(template="/layouts/default", useDefault=false);
 	</cfscript>
 </cffunction>
 
@@ -87,9 +70,12 @@
 			$throw(type="Wheels.Plugins.SuperScaffold.IncorrectMethodSequence", message="Please call `scaffold()` before calling `scaffoldNested()`.");
 			
 		if (!StructKeyExists(variables.$class.superscaffold, "nested"))
-			variables.$class.superscaffold.nested = [];
+			variables.$class.superscaffold.nested = {};
+			
+		if (!StructKeyExists(variables.$class.superscaffold.nested, "associations"))
+			variables.$class.superscaffold.nested.associations = [];
 		
-		ArrayAppend(variables.$class.superscaffold.nested, nestedAssociation);
+		ArrayAppend(variables.$class.superscaffold.nested.associations, nestedAssociation);
 	</cfscript>
 </cffunction>
 
@@ -122,13 +108,15 @@
 	<cfset $setSettings(methodName="scaffoldDelete", sectionName="delete", argumentCollection=arguments) />
 </cffunction>
 
-<cffunction name="scaffoldPermissions" access="public" output="false" returntype="void" mixin="controller" hint="This method should be called AFTER scaffold().">
+<cffunction name="scaffoldRoles" access="public" output="false" returntype="void" mixin="controller" hint="This method should be called AFTER scaffold().">
 	<cfargument name="roles" type="string" required="false" default="" />
 	<cfscript>
-		var loc = { areas = "list,view,nested,new,create,edit,update,delete,destroy" };
+		var loc = { areas = "" };
 		
 		if (!StructKeyExists(variables.$class, "superscaffold"))
-			$throw(type="Wheels.Plugins.SuperScaffold.IncorrectMethodSequence", message="Please call `scaffold()` before calling `scaffoldPermissions()`.");
+			$throw(type="Wheels.Plugins.SuperScaffold.IncorrectMethodSequence", message="Please call `scaffold()` before calling `scaffoldRoles()`.");
+			
+		loc.areas = $getSetting(name="actions");
 		
 		for (loc.i = 1; loc.i lte ListLen(loc.areas); loc.i++)
 		{
@@ -144,12 +132,6 @@
 			else
 				variables.$class.superscaffold[loc.area].roles = "all";
 		}
-		
-		
-		$dump(variables.$class);
-			
-		if (!StructKeyExists(variables.$class.superscaffold, "nested"))
-			variables.$class.superscaffold.nested = [];
 	</cfscript>
 </cffunction>
 

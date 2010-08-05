@@ -1,6 +1,30 @@
+<cffunction name="$verifySessionExists" access="public" output="false" returntype="boolean" mixin="controller">
+	<cfargument name="params" type="struct" required="false" default="#variables.params#" />
+	<cfscript>
+		var loc = { user = sessionCache("user"), params = arguments.params };
+		
+		if (!StructKeyExists(loc, "user") || !IsObject(loc.user) || loc.user.isNew())
+		{
+			if (!flashKeyExists("error"))
+				flashInsert(error="Please login and we'll send you right along.");
+			
+			if (arguments.params.controller == "admin")
+				arguments.params.controller = "";
+			
+			scaffoldRedirectTo(controller="sessions", action="new", params="return=#URLFor(argumentCollection=params)#");
+		}
+	</cfscript>
+	<cfreturn true />
+</cffunction>
+
 <cffunction name="$verifyScaffoldAccess" access="public" output="false" returntype="boolean" mixin="controller">
 	<cfscript>
-		if (params.action == "index" && !ListFindNoCase($getSetting(name="actions"), params.action))
+		// make sure the action is listed
+		if (!ListFindNoCase($getSetting(name="actions"), params.action))
+			params.action = "pageNotFound";
+		
+		// make sure that this users role is allowed access
+		if(!ListFindNoCase($getSetting(name="roles", sectionName=params.action), "all") && !ListFindNoCase($getSetting(name="roles", sectionName=params.action), sessionCache("user").role.title))
 			params.action = "pageNotFound";
 	</cfscript>
 	<cfreturn true />

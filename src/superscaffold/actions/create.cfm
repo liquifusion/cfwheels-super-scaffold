@@ -12,7 +12,7 @@
 			if (ArrayLen(variables[modelName].allErrors()) gt 1)
 				flashInsert(error="There were errors creating the #modelName#.");
 			else
-				flashInsert(error="There was an errors creating the #modelName#.");
+				flashInsert(error="There was an error creating the #modelName#.");
 			$loadDataForProperties(properties=properties);
 			renderWith(object=variables[modelName], template="new");
 		}

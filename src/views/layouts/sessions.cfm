@@ -4,32 +4,15 @@
 		<head>
 			#includePartial(partial="/layouts/head")#	
 		</head>
-		<body>
+		<body class="sessions">
 			<div id="wrapper">
 				<div id="inner-wrapper">
 				
-					<div id="header">
-						<div class="container">
-							#includePartial(partial="/layouts/header")#
-						</div>
-					</div>
-				
-					<div id="navigation">
-						<div class="container">
-							#includePartial(partial="/layouts/navigation", params=params, cache=true)#
-						</div>
-					</div>
-				
 					<div id="body">
 						<div class="container">
-							<div class="span-24">
-								<div id="loading-container">
-									<div>
-										<div class="message-container">
-											#flashShow()#
-										</div>
-										#includeContent()#
-									</div>
+							<div class="span-11 last">
+								<div style="padding:0 1.5em;">
+									#includeContent()#
 								</div>
 							</div>
 						</div>

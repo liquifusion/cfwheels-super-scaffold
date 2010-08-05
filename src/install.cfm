@@ -14,8 +14,9 @@
 	
 	// add our includes into config/routes.cfm and events/onapplicationstart.cfm
 	$wheels = { array = [], i = 1 };
-	$wheels.array[1] = { includeString = '[cfinclude template="../#get("pluginPath")#/superscaffold/superscaffold/config/routes.cfm" /]', file = get("routesScaffoldPathExpanded") };
-	$wheels.array[2] = { includeString = '[cfinclude template="../#get("pluginPath")#/superscaffold/superscaffold/events/onapplicationstart.cfm" /]', file = get("onApplicationStartScaffoldPathExpanded") };
+	$wheels.array[1] = { includeString = '[cfinclude template="#get("pluginPath")#/superscaffold/config/app.cfm" /]', file = get("appScaffoldPathExpanded") };
+	$wheels.array[2] = { includeString = '[cfinclude template="../#get("pluginPath")#/superscaffold/config/routes.cfm" /]', file = get("routesScaffoldPathExpanded") };
+	$wheels.array[3] = { includeString = '[cfinclude template="../#get("pluginPath")#/superscaffold/events/onapplicationstart.cfm" /]', file = get("onApplicationStartScaffoldPathExpanded") };
 	
 	for ($wheels.i = 1; $wheels.i lte ArrayLen($wheels.array); $wheels.i++)
 	{
@@ -33,5 +34,8 @@
 		}
 	}
 	
-	flashInsert(success="The install has completed successfully.");
+	role = model("role").create(title="Admin", description="This is the description for the admin roles that explains what anyone in the role can access.");
+	model("user").create(roleId=role.id, firstName="Admin", lastName="Admin", emailAddress="admin@admin.com", authenticationToken="admin");
+	
+	redirectTo(route="superscaffold", params="reload=true");
 </cfscript>

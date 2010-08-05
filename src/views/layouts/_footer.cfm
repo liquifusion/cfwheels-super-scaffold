@@ -1,12 +1,12 @@
 <cfoutput>
 	<p>
 		&copy; 
-		<cfif application.superScaffold.copyrightStartYear eq Year(Now())>
-			#application.superScaffold.copyrightStartYear#
+		<cfif application.wheels.scaffoldCopyrightStartYear eq Year(Now())>
+			#application.wheels.scaffoldCopyrightStartYear#
 		<cfelse>
-			#application.superScaffold.copyrightStartYear# - #Year(Now())#
+			#application.wheels.scaffoldCopyrightStartYear# - #Year(Now())#
 		</cfif>
-		<a href="#application.superScaffold.developerLink#" title="#application.superScaffold.developer#">#application.superScaffold.developer#</a>
+		<a href="#application.wheels.scaffoldDeveloperLink#" title="#application.wheels.scaffoldDeveloper#">#application.wheels.scaffoldDeveloper#</a>
 		- All rights reserved.
 	</p>
 </cfoutput>

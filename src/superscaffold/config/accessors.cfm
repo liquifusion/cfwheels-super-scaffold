@@ -3,11 +3,14 @@
 	<cfargument name="sectionName" type="string" required="false" />
 	<cfargument name="searchRoot" type="boolean" required="false" default="true" />
 	<cfscript>
-		if (StructKeyExists(arguments, "sectionName") && StructKeyExists(variables.$class.superScaffold, arguments.sectionName) && IsStruct(variables.$class.superScaffold[arguments.sectionName]) && StructKeyExists(variables.$class.superScaffold[arguments.sectionName], arguments.name))
-			return variables.$class.superScaffold[arguments.sectionName][arguments.name];
-		
-		if (StructKeyExists(variables.$class.superScaffold, arguments.name) && arguments.searchRoot)
-			return variables.$class.superScaffold[arguments.name];
+		if (StructKeyExists(variables.$class, "superscaffold"))
+		{
+			if (StructKeyExists(arguments, "sectionName") && StructKeyExists(variables.$class.superScaffold, arguments.sectionName) && IsStruct(variables.$class.superScaffold[arguments.sectionName]) && StructKeyExists(variables.$class.superScaffold[arguments.sectionName], arguments.name))
+				return variables.$class.superScaffold[arguments.sectionName][arguments.name];
+			
+			if (StructKeyExists(variables.$class.superScaffold, arguments.name) && arguments.searchRoot)
+				return variables.$class.superScaffold[arguments.name];
+		}
 	</cfscript>
 	<cfreturn "" />
 </cffunction>

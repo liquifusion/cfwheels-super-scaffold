@@ -15,14 +15,13 @@
 	<cfscript>
 		var loc = { returnValue = "" };
 		
-		if (!StructKeyExists(variables.$class.superscaffold, "nested"))
+		if (!StructKeyExists(variables.$class.superscaffold, "nested") || !StructKeyExists(variables.$class.superscaffold.nested, "associations"))
 			return loc.returnValue;
 			
-		for (loc.i = 1; loc.i lte ArrayLen(variables.$class.superscaffold.nested); loc.i++)
+		for (loc.i = 1; loc.i lte ArrayLen(variables.$class.superscaffold.nested.associations); loc.i++)
 		{
-			loc.association = variables.$class.superscaffold.nested[loc.i];
-			
-			loc.returnValue &= scaffoldLinkTo(action="nested", key=arguments.key, association=loc.association.association, text=capitalize(humanize(loc.association.label)), title=capitalize(humanize(loc.association.label)));
+			loc.association = variables.$class.superscaffold.nested.associations[loc.i];
+			loc.returnValue &= scaffoldLinkTo(action="nested", key=arguments.key, association=loc.association.association, text=capitalize(humanize(loc.association.label)), title=capitalize(humanize(loc.association.label)), class="#loc.association.association# nested");
 			loc.returnValue &= " ";
 		}
 	</cfscript>
@@ -43,8 +42,6 @@
 			{
 				// create a new opening fieldset tag and render the form field
 				loc.returnValue &= startFieldsetTag(title=loc.property.fieldset);
-				
-				// insert our property
 				loc.returnValue &= renderViewField(property=loc.property, object=arguments.object);
 				loc.currentFieldSet = loc.property.fieldset;
 			}
@@ -54,8 +51,6 @@
 				// create a new opening fieldset tag and render the form field
 				loc.returnValue &= endFieldsetTag();
 				loc.returnValue &= startFieldsetTag(title=loc.property.fieldset);
-				
-				// insert our property
 				loc.returnValue &= renderViewField(property=loc.property, object=arguments.object);
 				loc.currentFieldSet = loc.property.fieldset;
 			}
@@ -209,18 +204,14 @@
 			
 			case "cf_sql_char": case "cf_sql_varchar":
 			{
-				try
-				{
-					if (loc.mask == "password")
-						loc.returnValue &= scaffoldPasswordField(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType# #loc.mask#");
-					else
-						loc.returnValue &= scaffoldTextField(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType# #loc.mask#");
-					loc.returnValue &= errorMessageOn(objectName=loc.name, property=loc.property);
-				}
-				catch (Any e)
-				{
-					$dump(loc);
-				}
+				if (loc.mask == "password")
+					loc.returnValue &= scaffoldPasswordField(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType# #loc.mask#");
+				else if (loc.data.size gt 10000)
+					loc.returnValue &= scaffoldTextArea(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#");
+				else
+					loc.returnValue &= scaffoldTextField(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType# #loc.mask#");
+				loc.returnValue &= errorMessageOn(objectName=loc.name, property=loc.property);
+
 				break;
 			}
 						
@@ -291,11 +282,15 @@
 	<cfscript>
 		var loc = {};
 		loc.modelName = arguments.object.$modelName();
+		loc.association = arguments.association;
 		loc.nesting = arguments.baseObject.$modelName();
 		loc.properties = arguments.object.displayPropertiesFor(arguments.action);
 		$loadDataForProperties(properties=loc.properties);
+		// make sure we have a single row to display no matter what
 		if (ArrayIsEmpty(arguments.baseObject[arguments.association]))
 			ArrayAppend(arguments.baseObject[arguments.association], model(arguments.object.$modelName()).new());
+		// our last array item will be hidden in html comments so always add it on
+		ArrayAppend(arguments.baseObject[arguments.association], model(arguments.object.$modelName()).new());
 		loc.models = arguments.baseObject[arguments.association];
 	</cfscript>
 	<cfreturn renderPartial(partial="subform", returnAs="string", argumentCollection=loc) />
@@ -327,6 +322,8 @@
 		
 		StructDelete(arguments, "property");
 		StructDelete(arguments, "model");
+		
+		// arguments.rel = "in-page-address:" & scaffoldURLFor(argumentCollection=arguments);
 	</cfscript>
 	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
 </cffunction>
@@ -406,15 +403,21 @@
 	<cfreturn startFormTag(argumentCollection=arguments) />
 </cffunction>
 
-<cffunction name="scaffoldLinkTo" access="public" output="false" returntype="string" mixin="controller">
+<cffunction name="scaffoldURLFor" access="public" output="false" returntype="string" mixin="controller">
 	<cfargument name="route" type="string" required="false" default="superScaffold" />
 	<cfargument name="controller" type="string" required="false" default="#variables.params.controller#" />
 	<cfscript>
 		var loc = { returnValue = "", list = $getSetting(name="actions") };
-		if (!StructKeyExists(arguments, "action") || ListFindNoCase(loc.list, arguments.action))
-			loc.returnValue = linkTo(argumentCollection=arguments);
+		if (!StructKeyExists(arguments, "action") || ListFindNoCase(loc.list, REReplace(arguments.action, "-([a-z])", "\u\1", "all")) || arguments.controller == "sessions")
+			loc.returnValue = URLFor(argumentCollection=arguments);
 	</cfscript>
 	<cfreturn loc.returnValue />
+</cffunction>
+
+<cffunction name="scaffoldLinkTo" access="public" output="false" returntype="string" mixin="controller">
+	<cfargument name="route" type="string" required="false" default="superScaffold" />
+	<cfargument name="controller" type="string" required="false" default="#variables.params.controller#" />
+	<cfreturn linkTo(argumentCollection=arguments) />
 </cffunction>
 
 <cffunction name="scaffoldLinkToBack" access="public" output="false" returntype="string" mixin="controller">
