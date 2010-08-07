@@ -4,8 +4,14 @@
 		// should be passing through everything we need to save
 		variables[modelName] = modelObject.findByKey(key=params[modelName].id);
 		
-		if (variables[modelName].update(properties=params[modelName]))
+		variables[modelName].setProperties(property=params[modelName]);
+		
+		$executeScaffoldingCallback(type="beforeUpdate", object=variables[modelName]);
+		
+		if (variables[modelName].update())
 		{
+			$executeScaffoldingCallback(type="afterUpdate", object=variables[modelName]);
+		
 			flashInsert(success="The #modelName# was updated successfully.");
 			scaffoldRedirectTo(action=$getSetting(name="returnToAction", sectionName="update"));
 		}

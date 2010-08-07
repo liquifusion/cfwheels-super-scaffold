@@ -57,4 +57,34 @@
 	<cfreturn true />
 </cffunction>
 
+<cffunction name="$setReturnParams" access="public" output="false" returntype="boolean" mixin="controller">
+	<cfargument name="params" type="struct" required="false" default="#variables.params#" />
+	<cfscript>
+		var loc = {};
+		loc.returnParams = sessionCache("returnParams");
+		
+		if (!StructKeyExists(loc, "returnParams"))
+			loc.returnParams = "";
+			
+		if (arguments.params.action == "list")
+			loc.returnParams = "";
+			
+		if (arguments.params.action == "nested")
+		{
+			loc.currentUrl = scaffoldURLFor(argumentCollection=arguments.params);
+			loc.position = ListFindNoCase(loc.returnParams, loc.currentUrl);
+			
+			if (loc.position gt 1)
+				for (loc.i = loc.position - 1; loc.i gte 1; loc.i--)
+					loc.returnParams = ListDeleteAt(loc.returnParams, loc.i);
+			else if (loc.position == 0)
+				loc.returnParams = ListPrepend(loc.returnParams, loc.currentUrl);
+		}
+		
+		sessionCache("returnParams", loc.returnParams);
+		arguments.params.returnParams = loc.returnParams;
+	</cfscript>
+	<cfreturn true />
+</cffunction>
+
 

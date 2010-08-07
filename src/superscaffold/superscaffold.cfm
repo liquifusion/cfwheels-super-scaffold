@@ -32,7 +32,7 @@
 		scaffoldDelete();
 		scaffoldRoles();
 		
-		filters(through="$verifySessionExists,$setModel,$defaultRequiredParams");
+		filters(through="$verifySessionExists,$setModel,$defaultRequiredParams,$setReturnParams");
 		filters(through="$verifyScaffoldAccess", except="badRequest,pageNotFound");
 		
 		// setup our default layout for all super scaffold admin areas

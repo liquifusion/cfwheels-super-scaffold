@@ -1,3 +1,18 @@
+<cffunction name="$executeScaffoldingCallback" access="public" output="false" returntype="void" mixin="controller">
+	<cfargument name="type" type="string" required="true" />
+	<cfargument name="object" type="component" required="true" />
+	<cfargument name="action" type="string" required="false" default="#variables.params.action#" />
+	<cfscript>
+		var callbackMethod = false;
+		argments.action = (arguments.action == "destroy") ? "delete" : arguments.action;
+		
+		callbackMethod = $getSetting(name=arguments.type, section=arguments.action, searchRoot=false);
+		
+		if (callbackMethod != false && StructKeyExists(this, callbackMethod))
+			$invoke(method=callbackMethod, object=arguments.object);
+	</cfscript>
+</cffunction>
+
 <cffunction name="$loadDataForProperties" access="public" output="false" returntype="void" mixin="controller">
 	<cfargument name="properties" type="array" required="true" />
 	<cfscript>
@@ -85,5 +100,9 @@
 		params.s = (params.s == "primaryKeys") ? model.primaryKey() : params.s;
 	</cfscript>
 	<cfreturn params.s & " " & params.d />
+</cffunction>
+
+<cffunction name="$controllerName" access="public" output="false" returntype="string" mixin="controller">
+	<cfreturn variables.$class.name />
 </cffunction>
 

@@ -10,10 +10,45 @@
 	<cfreturn "</fieldset></div>" />
 </cffunction>
 
-<cffunction name="renderAssocicationLinks" access="public" output="false" returntype="string" mixin="controller">
+<cffunction name="renderNestedViewActionLinks" access="public" output="false" returntype="string" mixin="controller">
 	<cfargument name="key" type="numeric" required="true" />
+	<cfargument name="association" type="string" required="true" />
 	<cfscript>
 		var loc = { returnValue = "" };
+		
+		loc.controller = $controller(arguments.association).$createControllerObject(variables.params);
+		
+		if (!Len(loc.controller.$getSetting(name="actions")));
+			return loc.returnValue;
+		
+		loc.controllerName = loc.controller.$controllerName();
+		
+		
+		loc.returnValue &= scaffoldLinkToView(controller=loc.controllerName, key=arguments.key);
+		loc.returnValue &= scaffoldLinkToEdit(text="Edit", controller=loc.controllerName, key=arguments.key, class="edit");
+		loc.returnValue &= scaffoldLinkToDelete(controller=loc.controllerName, key=arguments.key, class="edit");
+	</cfscript>
+	<cfreturn loc.returnValue />
+</cffunction>
+
+<cffunction name="renderAssociationLinks" access="public" output="false" returntype="string" mixin="controller">
+	<cfargument name="key" type="numeric" required="true" />
+	<cfargument name="association" type="string" required="false" default="" />
+	<cfscript>
+		var loc = { returnValue = "" };
+		
+		if (Len(arguments.association))
+		{
+			try
+			{
+				loc.controller = $controller(arguments.association).$createControllerObject(variables.params);
+				return loc.controller.renderAssociationLinks(key=arguments.key);
+			}
+			catch (Any e)
+			{
+				return loc.returnValue;
+			}
+		}
 		
 		if (!StructKeyExists(variables.$class.superscaffold, "nested") || !StructKeyExists(variables.$class.superscaffold.nested, "associations"))
 			return loc.returnValue;
@@ -83,11 +118,26 @@
 	<cfargument name="object" type="component" required="true" />
 	<cfscript>
 		var loc = { returnValue = "" };
+		
+		if (StructKeyExists(arguments.property, "type") && arguments.property.type == "hasMany" && StructKeyExists(arguments.object, arguments.property.property) && IsArray(arguments.object[arguments.property.property]) && ArrayLen(arguments.object[arguments.property.property]))
+		{
+			loc.args = {
+				  returnAs = "string"
+				, partial = "viewlist"
+				, associationName = arguments.property.property
+				, properties = arguments.object[arguments.property.property][1].displayPropertiesFor("list")
+				, modelName = arguments.object[arguments.property.property][1].$modelName()
+				, models = arguments.object[arguments.property.property]
+			};
+			$loadDataForProperties(properties=loc.args.properties);
+			return renderPartial(argumentCollection=loc.args);
+		}
+		
 		loc.returnValue &= $tag(name="dl");
 		loc.attributes = { class = "#arguments.property.property# label"};
 		loc.returnValue &= $element(name="dt", content=arguments.object.$label(arguments.property.property), attributes=loc.attributes);
 		loc.attributes = { class = "#arguments.property.property# value"};
-		loc.returnValue &= $element(name="dd", content=displayProperty(modelName=arguments.object.$modelName(), property=arguments.property, value=arguments.object[arguments.property.property]), attributes=loc.attributes);
+		loc.returnValue &= $element(name="dd", content=displayProperty(argumentCollection=arguments), attributes=loc.attributes);
 		loc.returnValue &= "</dl>";
 	</cfscript>
 	<cfreturn loc.returnValue />
@@ -147,17 +197,20 @@
 	<cfargument name="position" type="numeric" required="false" default="0" />
 	<cfscript>
 		var loc = {};
-		loc.name = arguments.object.$modelName();
+		
+		arguments.name = arguments.object.$modelName();
 		
 		// build our object name
 		if (Len(arguments.nesting) && arguments.position)
-			loc.name = arguments.nesting & "['" & pluralize(arguments.object.$modelName()) & "']" & "[" & arguments.position & "]";
+			arguments.name = arguments.nesting & "['" & pluralize(arguments.object.$modelName()) & "']" & "[" & arguments.position & "]";
 		else if (Len(arguments.nesting))
-			loc.name = arguments.nesting & "['" & arguments.object.$modelName() & "']";
+			arguments.name = arguments.nesting & "['" & arguments.object.$modelName() & "']";
 		loc.property = arguments.property.property;
 		
-		if (StructKeyExists(variables, "#loc.name##loc.property#formField"))
-			return Evaluate("#loc.name##loc.property#display(property=arguments.property, value=arguments.value)");		
+		loc.overrideMethod = arguments.object.$modelName() & loc.property & "FormField";
+		
+		if (StructKeyExists(variables, loc.overrideMethod))
+			return $invoke(method=loc.overrideMethod, argumentCollection=arguments);
 		
 		loc.returnValue = "";
 		
@@ -190,49 +243,35 @@
 		{
 			case "cf_sql_bit":
 			{
-				loc.returnValue &= scaffoldCheckbox(objectName=loc.name, property=loc.property, description=loc.description);
-				loc.returnValue &= errorMessageOn(objectName=loc.name, property=loc.property);
+				loc.returnValue &= scaffoldCheckbox(objectName=arguments.name, property=loc.property, description=loc.description);
+				loc.returnValue &= errorMessageOn(objectName=arguments.name, property=loc.property);
 				break;
 			}
 			
 			case "cf_sql_tinyint": case "cf_sql_smallint": case "cf_sql_integer": case "cf_sql_bigint": case "cf_sql_real": case "cf_sql_numeric": case "cf_sql_float": case "cf_sql_decimal": case "cf_sql_double":
 			{
-				loc.returnValue &= scaffoldTextField(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#");
-				loc.returnValue &= errorMessageOn(objectName=loc.name, property=loc.property);
+				loc.returnValue &= scaffoldTextField(objectName=arguments.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#");
+				loc.returnValue &= errorMessageOn(objectName=arguments.name, property=loc.property);
 				break;
 			}
 			
 			case "cf_sql_char": case "cf_sql_varchar":
 			{
 				if (loc.mask == "password")
-					loc.returnValue &= scaffoldPasswordField(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType# #loc.mask#");
+					loc.returnValue &= scaffoldPasswordField(objectName=arguments.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType# #loc.mask#");
 				else if (loc.data.size gt 10000)
-					loc.returnValue &= scaffoldTextArea(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#");
+					loc.returnValue &= scaffoldTextArea(objectName=arguments.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#");
 				else
-					loc.returnValue &= scaffoldTextField(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType# #loc.mask#");
-				loc.returnValue &= errorMessageOn(objectName=loc.name, property=loc.property);
+					loc.returnValue &= scaffoldTextField(objectName=arguments.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType# #loc.mask#");
+				loc.returnValue &= errorMessageOn(objectName=arguments.name, property=loc.property);
 
 				break;
 			}
-						
-			case "cf_sql_time":
-			{
-				loc.returnValue &= scaffoldSingleTimeSelect(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#", includeBlank=loc.required);
-				loc.returnValue &= errorMessageOn(objectName=loc.name, property=loc.property);
-				break;
-			}
 			
-			case "cf_sql_date":
+			case "cf_sql_date": case "cf_sql_timestamp": case "cf_sql_time":
 			{
-				loc.returnValue &= scaffoldDateSelect(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#", includeBlank=loc.required);
-				loc.returnValue &= errorMessageOn(objectName=loc.name, property=loc.property);
-				break;
-			}
-			
-			case "cf_sql_timestamp":
-			{
-				loc.returnValue &= scaffoldDateTimeSelect(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#", includeBlank=loc.required);
-				loc.returnValue &= errorMessageOn(objectName=loc.name, property=loc.property);
+				loc.returnValue &= scaffoldTextField(objectName=arguments.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType# date", includeBlank=loc.required);
+				loc.returnValue &= errorMessageOn(objectName=arguments.name, property=loc.property);
 				break;
 			}
 			
@@ -244,29 +283,29 @@
 			
 			case "hasOne":
 			{
-				loc.returnValue &= renderFormFields(properties=arguments.object[loc.property].displayPropertiesFor(params.action), object=arguments.object[loc.property], nesting=loc.name);
+				loc.returnValue &= renderFormFields(properties=arguments.object[loc.property].displayPropertiesFor(params.action), object=arguments.object[loc.property], nesting=arguments.name);
 				break;
 			}
 			
 			case "belongsTo":
 			{
-				loc.returnValue &= scaffoldSelect(label=loc.data.label, objectName=loc.name, property="#arguments.property.foreignKey#", options=variables[pluralize(loc.property)], description=loc.description, class="text #loc.required#", includeBlank="Select a #capitalize(humanize(loc.property))#");
-				loc.returnValue &= errorMessageOn(objectName=loc.name, property="#arguments.property.foreignKey#");
+				loc.returnValue &= scaffoldSelect(label=loc.data.label, objectName=arguments.name, property="#arguments.property.foreignKey#", options=variables[pluralize(loc.property)], description=loc.description, class="text #loc.required#", includeBlank="Select a #capitalize(humanize(loc.property))#");
+				loc.returnValue &= errorMessageOn(objectName=arguments.name, property="#arguments.property.foreignKey#");
 				break;
 			}
 			
 			case "hasOptions":
 			{
-				loc.returnValue &= scaffoldSelect(label=loc.data.label, objectName=loc.name, property="#loc.property#", options=loc.options, description=loc.description, class="text #loc.required#", includeBlank="Select a #arguments.property.label#");
-				loc.returnValue &= errorMessageOn(objectName=loc.name, property="#loc.property#");
+				loc.returnValue &= scaffoldSelect(label=loc.data.label, objectName=arguments.name, property="#loc.property#", options=loc.options, description=loc.description, class="text #loc.required#", includeBlank="Select a #arguments.property.label#");
+				loc.returnValue &= errorMessageOn(objectName=arguments.name, property="#loc.property#");
 				break;
 			}
 			
 			default:
 			{
 				$dump(arguments);
-				loc.returnValue = scaffoldTextArea(objectName=loc.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#");
-				loc.returnValue &= errorMessageOn(objectName=loc.name, property=loc.property);
+				loc.returnValue = scaffoldTextArea(objectName=arguments.name, property=loc.property, description=loc.description, class="text #loc.required# #loc.data.validationType#");
+				loc.returnValue &= errorMessageOn(objectName=arguments.name, property=loc.property);
 				break;
 			}
 		}
@@ -322,8 +361,6 @@
 		
 		StructDelete(arguments, "property");
 		StructDelete(arguments, "model");
-		
-		// arguments.rel = "in-page-address:" & scaffoldURLFor(argumentCollection=arguments);
 	</cfscript>
 	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
 </cffunction>
@@ -342,19 +379,29 @@
 </cffunction>
 
 <cffunction name="displayProperty" access="public" output="false" returntype="string" mixin="controller">
-	<cfargument name="modelName" type="string" required="true" />
 	<cfargument name="property" type="struct" required="true" />
-	<cfargument name="value" type="any" required="true" />
+	<cfargument name="object" type="component" required="true" />
 	<cfscript>
-		var returnValue = "";
-		if (StructKeyExists(variables, "#arguments.modelName##arguments.property.property#display"))
-			returnValue = Evaluate("#arguments.modelName##arguments.property.property#display(property=arguments.property.property, value=arguments.value)");
+		var loc = { returnValue = "" };
+		loc.modelName = arguments.object.$modelName();
+		loc.displayOverrideMethod = loc.modelName & arguments.property.property & "Display";
+		
+		// add the value to the arguments to be able to easily get it in display overrides
+		arguments.value = arguments.object[arguments.property.property];
+		
+		
+		if (StructKeyExists(variables, loc.displayOverrideMethod) && (!IsSimpleValue(arguments.value) || Len(arguments.value)))
+			returnValue = $invoke(method=loc.displayOverrideMethod, argumentCollection=arguments);
+
 		else if (StructKeyExists(arguments.property, "type") && arguments.property.type eq "hasMany" && !ArrayIsEmpty(arguments.value) && StructKeyExists(arguments.value[1], "display"))
 			returnValue = arguments.value[1].display;
+
 		else if (StructKeyExists(arguments.property, "type") && ListFindNoCase("hasOne,belongsTo", arguments.property.type) && IsObject(arguments.value) && StructKeyExists(arguments.value, "display"))
 			returnValue = arguments.value.display;
-		else if (IsSimpleValue(arguments.value) && Len(arguments.value))
+
+		else if (IsSimpleValue(arguments.value) && Len(arguments.value) && arguments.value != "false")
 			returnValue = arguments.value;
+
 		else
 			returnValue = "-";
 	</cfscript>
@@ -405,31 +452,27 @@
 
 <cffunction name="scaffoldURLFor" access="public" output="false" returntype="string" mixin="controller">
 	<cfargument name="route" type="string" required="false" default="superScaffold" />
-	<cfargument name="controller" type="string" required="false" default="#variables.params.controller#" />
-	<cfscript>
-		var loc = { returnValue = "", list = $getSetting(name="actions") };
-		if (!StructKeyExists(arguments, "action") || ListFindNoCase(loc.list, REReplace(arguments.action, "-([a-z])", "\u\1", "all")) || arguments.controller == "sessions")
-			loc.returnValue = URLFor(argumentCollection=arguments);
-	</cfscript>
-	<cfreturn loc.returnValue />
+	<cfargument name="controller" type="string" required="false" default="#variables.$class.name#" />
+	<cfreturn URLFor(argumentCollection=arguments) />
 </cffunction>
 
 <cffunction name="scaffoldLinkTo" access="public" output="false" returntype="string" mixin="controller">
 	<cfargument name="route" type="string" required="false" default="superScaffold" />
-	<cfargument name="controller" type="string" required="false" default="#variables.params.controller#" />
-	<cfreturn linkTo(argumentCollection=arguments) />
+	<cfargument name="controller" type="string" required="false" default="#variables.$class.name#" />
+	<cfreturn linkTo(argumentCollection=arguments) & " " />
 </cffunction>
 
 <cffunction name="scaffoldLinkToBack" access="public" output="false" returntype="string" mixin="controller">
-	<cfargument name="text" type="string" required="false" default="<span>Back to list</span>" />
+	<cfargument name="text" type="string" required="false" default="<span>Back</span>" />
 	<cfargument name="title" type="string" required="false" default="#stripTags(arguments.text)#" />
 	<cfargument name="class" type="string" required="false" default="interface-button back" />
-	<cfargument name="params" type="struct" required="false" default="#variables.params#" />
+	<cfargument name="controllerParams" type="struct" required="false" default="#variables.params#" />
 	<cfscript>
-		if (StructKeyExists(arguments.params, "return"))
-			arguments.href = arguments.params.return;
-			
-		StructDelete(arguments, "params");
+		if (ListLen(arguments.controllerParams.returnParams) gt 1 && arguments.controllerParams.action == "nested")
+			return linkTo(text=arguments.text, title=arguments.title, class=arguments.class, href=ListGetAt(arguments.controllerParams.returnParams, 2));
+		else if (ListLen(arguments.controllerParams.returnParams) && ListFirst(arguments.controllerParams.returnParams) != scaffoldURLFor(argumentCollection=arguments.controllerParams))
+			return linkTo(text=arguments.text, title=arguments.title, class=arguments.class, href=ListFirst(arguments.controllerParams.returnParams));
+		StructDelete(arguments, "controllerParams", false);
 	</cfscript>
 	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
 </cffunction>
@@ -439,38 +482,31 @@
 	<cfargument name="title" type="string" required="false" default="#stripTags(arguments.text)#" />
 	<cfargument name="action" type="string" required="false" default="delete" />
 	<cfargument name="class" type="string" required="false" default="interface-button delete" />
-	<cfargument name="params" type="struct" required="false" default="#variables.params#" />
-	<cfscript>
-		if (StructKeyExists(arguments.params, "return"))
-			arguments.params = nestedReturnParams();
-		else
-			StructDelete(arguments, "params");
-	</cfscript>
 	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
 </cffunction>
 
 <cffunction name="scaffoldLinkToEdit" access="public" output="false" returntype="string" mixin="controller">
-	<cfargument name="text" type="string" required="false" default="<span>Edit this #capitalize(humanize(modelName))#</span>" />
+	<cfargument name="text" type="string" required="false" default="<span>Edit this Object</span>" />
 	<cfargument name="title" type="string" required="false" default="#stripTags(arguments.text)#" />
 	<cfargument name="action" type="string" required="false" default="edit" />
 	<cfargument name="class" type="string" required="false" default="interface-button edit" />
-	<cfargument name="params" type="struct" required="false" default="#variables.params#" />
-	<cfscript>
-		if (StructKeyExists(arguments.params, "return"))
-			arguments.params = nestedReturnParams();
-		else
-			StructDelete(arguments, "params");
-	</cfscript>
 	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
 </cffunction>
 
+<cffunction name="scaffoldLinkToNew" access="public" output="false" returntype="string" mixin="controller">
+	<cfargument name="text" type="string" required="false" default="<span>Create a new Object</span>" />
+	<cfargument name="title" type="string" required="false" default="#stripTags(arguments.text)#" />
+	<cfargument name="action" type="string" required="false" default="new" />
+	<cfargument name="class" type="string" required="false" default="interface-button new" />
+	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
+</cffunction>
 
-<cffunction name="nestedReturnParams" access="public" output="false" returntype="string" mixin="controller">
-	<cfargument name="params" type="struct" required="false" default="#variables.params#" />
-	<cfif StructKeyExists(arguments.params, "return")>
-		<cfreturn "return=#arguments.params.return#" />
-	</cfif>
-	<cfreturn "return=#URLFor(argumentCollection=params)#" />
+<cffunction name="scaffoldLinkToView" access="public" output="false" returntype="string" mixin="controller">
+	<cfargument name="text" type="string" required="false" default="View" />
+	<cfargument name="title" type="string" required="false" default="#arguments.text#" />
+	<cfargument name="action" type="string" required="false" default="view" />
+	<cfargument name="class" type="string" required="false" default="view" />
+	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
 </cffunction>
 
 <cffunction name="scaffoldNavigationLinkTo" access="public" output="false" returntype="string" mixin="controller">

@@ -2,6 +2,8 @@
 	<cfscript>
 		variables[modelName] = modelObject.findByKey(key=params.key);
 		
+		$executeScaffoldingCallback(type="beforeDelete", object=variables[modelName]);
+		
 		if (variables[modelName].delete())
 			flashInsert(success="The #modelName# was deleted successfully.");
 		else

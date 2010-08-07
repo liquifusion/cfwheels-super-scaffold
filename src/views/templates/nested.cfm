@@ -3,16 +3,8 @@
 		
 		<!--- new link --->
 		<div class="links">
-			#scaffoldLinkTo(text="<span>Back to list</span>", title="Back to list", class="interface-button back")#
-			#scaffoldLinkTo(
-				  controller=params.association
-				, action="new"
-				, key=variables[modelName][modelObject.primaryKey()]
-				, association=modelName
-				, params=nestedReturnParams()
-				, text="<span>Create a new #capitalize(humanize(associationName))#</span>"
-				, title="View"
-				, class="interface-button new")#
+			#scaffoldLinkToBack()#
+			#scaffoldLinkToNew(text="<span>Create a new #humanize(associationName)#</span>", controller=params.association, key=variables[modelName][modelObject.primaryKey()], association=modelName)#
 		</div>
 
 		<div class="heading">

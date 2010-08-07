@@ -37,5 +37,5 @@
 	role = model("role").create(title="Admin", description="This is the description for the admin roles that explains what anyone in the role can access.");
 	model("user").create(roleId=role.id, firstName="Admin", lastName="Admin", emailAddress="admin@admin.com", authenticationToken="admin");
 	
-	redirectTo(route="superscaffold", params="reload=true");
+	$location(url="/admin?reload=true", addtoken=false);
 </cfscript>

@@ -2,27 +2,32 @@
 	<cfscript>
 		var loc = { rootPath = "" };
 		// set our application defaults that are needed for the entire admin area
-		application.wheels.scaffoldNavigation = [ [ "users", "roles" ] ];
-		application.wheels.scaffoldTitle = "Site Administration";
-		application.wheels.scaffoldDeveloper = "Liquifusion Studios";
-		application.wheels.scaffoldDeveloperLink = "http://www.liquifusion.com";
-		application.wheels.scaffoldCopyrightStartYear = Year(Now());
+		if (!StructKeyExists(application.wheels, "scaffoldNavigation"))
+			application.wheels.scaffoldNavigation = [ [ "users", "roles" ] ];
+		if (!StructKeyExists(application.wheels, "scaffoldTitle"))
+			application.wheels.scaffoldTitle = "Site Administration";
+		if (!StructKeyExists(application.wheels, "scaffoldDeveloper"))
+			application.wheels.scaffoldDeveloper = "Liquifusion Studios";
+		if (!StructKeyExists(application.wheels, "scaffoldDeveloperLink"))
+			application.wheels.scaffoldDeveloperLink = "http://www.liquifusion.com";
+		if (!StructKeyExists(application.wheels, "scaffoldCopyrightStartYear"))
+			application.wheels.scaffoldCopyrightStartYear = Year(Now());
 	
 		// defaults for our init() method calls --->
 		application.wheels.functions.scaffold = { actions = "create,update,delete,view,nested", formats = "html,xml,json,csv,xls" };
 		application.wheels.functions.scaffoldList = { paginationEnabled = true, paginationWindowSize = 3, paginationPerPage = 20, sorting = "primaryKeys", sortingDirection = "asc" };
 		application.wheels.functions.scaffoldView = { returnToAction = "list" };
 		application.wheels.functions.scaffoldSearch = { textSearch = "full" };
-		application.wheels.functions.scaffoldCreate = { returnToAction = "list", multipart = false };
-		application.wheels.functions.scaffoldUpdate = { returnToAction = "list", multipart = false };
-		application.wheels.functions.scaffoldDelete = { returnToAction = "list" };
+		application.wheels.functions.scaffoldCreate = { returnToAction = "list", beforeCreate = false, afterCreate = false, multipart = false };
+		application.wheels.functions.scaffoldUpdate = { returnToAction = "list", beforeUpdate = false, afterUpdate = false, multipart = false };
+		application.wheels.functions.scaffoldDelete = { returnToAction = "list", beforeDelete = false };
 		
-		// set defaults for all of our form functions --->
+		// set defaults for all of our scaffolding form functions, these methods were created to not interfere with your actual application --->
 		application.wheels.functions.scaffoldTextField = { prependToLabel="<p>", append="</p>", labelPlacement="before", errorElement="div" };
 		application.wheels.functions.scaffoldPasswordField = { prependToLabel="<p>", append="</p>", labelPlacement="before", errorElement="div" };
 		application.wheels.functions.scaffoldFileField = { prependToLabel="<p>", append="</p>", labelPlacement="before", errorElement="div" };
 		application.wheels.functions.scaffoldTextArea = { prependToLabel="<p>", append="</p>", labelPlacement="before", cols="5000" };
-		application.wheels.functions.scaffoldRadioButton = { prependToLabel="<p class=""checkbox"">", append="</p>", labelPlacement="after", errorElement="div" };
+		application.wheels.functions.scaffoldRadioButton = { prepend="<p class=""checkbox"">", appendToLabel="</p>", labelPlacement="after", errorElement="div" };
 		application.wheels.functions.scaffoldCheckBox = { prepend="<p class=""checkbox"">", appendToLabel="</p>", labelPlacement="after", errorElement="div" };
 		application.wheels.functions.scaffoldSelect = { prependToLabel="<p>", append="</p>", labelPlacement="before", errorElement="div" };
 		application.wheels.functions.scaffoldDateSelect = {prependToLabel="<p>", append="</p>", labelPlacement="before", errorElement="div" };

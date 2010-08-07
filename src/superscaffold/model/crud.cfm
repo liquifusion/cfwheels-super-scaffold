@@ -17,8 +17,28 @@
 </cffunction>
 
 <cffunction name="scaffoldFindByKey" returntype="any" access="public" output="false" mixin="model">
-	<cfset arguments.include = $associationList(displayFor="view,new,edit,delete") />
-	<cfreturn findByKey(argumentCollection=arguments) />
+	<cfscript>
+		var loc = { associations = $associationList(displayFor="view,new,edit,delete") };
+		loc.object = findByKey(argumentCollection=arguments);
+		
+		for (loc.i = 1; loc.i lte ListLen(loc.associations); loc.i++)
+		{
+			loc.associationName = ListGetAt(loc.associations, loc.i);
+			loc.association = variables.wheels.class.associations[loc.associationName];
+			loc.associationModel = model(loc.association.modelName);
+			
+			// set our arguments
+			loc.args = {
+				  include = loc.associationModel.$associationList(displayFor="view,new,edit,delete")
+				, returnAs = "objects"
+			};
+			
+			// for some reason calling $invoke will NOT work with the loc.object reference, 
+			// calling onMissingMethod directly does though, weird
+			loc.object[loc.associationName] = loc.object.onMissingMethod(loc.associationName, loc.args);
+		}
+	</cfscript>
+	<cfreturn loc.object />
 </cffunction>
 
 <cffunction name="scaffoldFindAll" returntype="any" access="public" output="false" mixin="model">

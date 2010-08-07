@@ -4,7 +4,7 @@
 		<!--- navigation links --->
 		<div class="links">
 			#scaffoldLinkToBack()#
-			#scaffoldLinkToEdit(key=variables[modelName][modelObject.primaryKey()])#
+			#scaffoldLinkToEdit(text="<span>Edit this #humanize(modelName)#</span>", name=modelName, key=variables[modelName][modelObject.primaryKey()])#
 			#scaffoldLinkToDelete(key=variables[modelName][modelObject.primaryKey()])#
 		</div>
 	

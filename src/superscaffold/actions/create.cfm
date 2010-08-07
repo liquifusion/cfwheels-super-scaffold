@@ -2,8 +2,12 @@
 	<cfscript>
 		variables[modelName] = modelObject.scaffoldNew(properties=params[modelName]);
 		
+		$executeScaffoldingCallback(type="beforeCreate", object=variables[modelName]);
+		
 		if (variables[modelName].save())
 		{
+			$executeScaffoldingCallback(type="afterCreate", object=variables[modelName]);
+		
 			flashInsert(success="The #modelName# was created successfully.");
 			scaffoldRedirectTo(action=$getSetting(name="returnToAction", sectionName="create"));
 		}

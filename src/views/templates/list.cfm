@@ -3,7 +3,7 @@
 		
 		<!--- new link --->
 		<div class="links">
-			#scaffoldLinkTo(action="new", text="<span>Create a new #capitalize(modelName)#</span>", title="Create a new #capitalize(modelName)#", class="interface-button new")#
+			#scaffoldLinkToNew(text="<span>Create a new #humanize(modelName)#</span>")#
 		</div>
 
 		<div class="heading">

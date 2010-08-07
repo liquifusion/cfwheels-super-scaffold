@@ -2,14 +2,14 @@
 	<tr<cfif loc.current mod 2 eq 0> class="alternate-row"</cfif>>
 		<cfloop array="#properties#" index="property">
 			<td class="#property.property#">
-				#displayProperty(modelName=modelName, property=property, value=loc[property.property])#
+				#displayProperty(object=loc[modelName], property=property)#
 			</td>
 		</cfloop>
 		<td class="action-links">
-			#renderAssocicationLinks(key=loc[modelObject.primaryKey()])#
-			#scaffoldLinkTo(action="view", key=loc[modelObject.primaryKey()], text="View", title="View", class="view")#
-			#scaffoldLinkTo(action="edit", key=loc[modelObject.primaryKey()], text="Edit", title="Edit", class="edit")#
-			#scaffoldLinkTo(action="delete", key=loc[modelObject.primaryKey()], text="Delete", title="Delete", class="delete")#
+			#renderAssociationLinks(key=loc[modelObject.primaryKey()])#
+			#scaffoldLinkToView(key=loc[modelObject.primaryKey()])#
+			#scaffoldLinkToEdit(key=loc[modelObject.primaryKey()], text="Edit", class="edit", name=modelName)#
+			#scaffoldLinkToDelete(key=loc[modelObject.primaryKey()], text="Delete", class="delete")#
 		</td>
 	</tr>
 </cfoutput>
