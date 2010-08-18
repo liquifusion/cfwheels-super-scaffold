@@ -1,6 +1,7 @@
 <cffunction name="doCreate" access="public" output="false" returntype="void" mixin="controller">
 	<cfscript>
-		variables[modelName] = modelObject.scaffoldNew(properties=params[modelName]);
+		variables[modelName] = modelObject.new();
+		variables[modelName].setProperties(properties=params[modelName], $useFilterLists=false);
 		
 		$executeScaffoldingCallback(type="beforeCreate", object=variables[modelName]);
 		

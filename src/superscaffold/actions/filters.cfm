@@ -35,6 +35,7 @@
 	<cfparam name="params.p" default="1" />
 	<cfparam name="params.s" default="#$getSetting(name='sorting', sectionName='list')#" />
 	<cfparam name="params.d" default="#$getSetting(name='sortingDirection', sectionName='list')#" />
+	<cfparam name="params.returnParams" default="" />
 	<cfreturn true />
 </cffunction>
 
@@ -66,7 +67,7 @@
 		if (!StructKeyExists(loc, "returnParams"))
 			loc.returnParams = "";
 			
-		if (arguments.params.action == "list")
+		if (ListFindNoCase("index,list", arguments.params.action))
 			loc.returnParams = "";
 			
 		if (arguments.params.action == "nested")
@@ -83,6 +84,63 @@
 		
 		sessionCache("returnParams", loc.returnParams);
 		arguments.params.returnParams = loc.returnParams;
+	</cfscript>
+	<cfreturn true />
+</cffunction>
+
+<cffunction name="$setBreadCrumbs" access="public" output="false" returntype="boolean" mixin="controller">
+	<cfargument name="params" type="struct" required="false" default="#variables.params#" />
+	<cfscript>
+		var loc = {};
+		loc.params = Duplicate(arguments.params);
+		StructDelete(loc.params, "action", false);
+		loc.breadCrumbs = sessionCache("breadCrumbs");
+		loc.returnParams = arguments.params.returnParams;
+		loc.previousController = sessionCache("breadCrumbsController");
+		
+		if (!StructKeyExists(loc, "previousController"))
+			loc.previousController = loc.params.controller;
+		
+		if (!StructKeyExists(loc, "breadCrumbs"))
+			loc.breadCrumbs = [ 
+				  { text = $getSetting(name="label", sectionName="list"), href = scaffoldURLFor(argumentCollection=loc.params) } 
+			];
+			
+		if (arguments.params.action == "index")
+			loc.breadCrumbs = [];
+			
+		if (arguments.params.action == "list" || (loc.previousController != loc.params.controller && !ListLen(loc.returnParams) && arguments.params.action != "index"))
+			loc.breadCrumbs = [ 
+				  { text = $getSetting(name="label", sectionName="list"), href = scaffoldURLFor(argumentCollection=arguments.params) } 
+			];
+		
+		if (ListLen(loc.returnParams))
+		{
+			loc.currentUrl = scaffoldURLFor(argumentCollection=arguments.params);
+			// add our nestings to the breadcrumbs
+			for (loc.i = ListLen(loc.returnParams); loc.i gte 1; loc.i--)
+			{
+				loc.returnParam = ListGetAt(loc.returnParams, loc.i);
+				ArrayAppend(loc.breadCrumbs, { text = humanize(ListLast(loc.returnParam, "/")), href = loc.returnParam });
+			}
+		}
+		
+		if (!ListFindNoCase("nested,list,index", arguments.params.action))
+		{
+			loc.text = humanize(arguments.params.action);
+			ArrayAppend(loc.breadCrumbs, { text = loc.text , href = scaffoldURLFor(argumentCollection=arguments.params) });
+		}
+		
+		params.breadCrumbs = loc.breadCrumbs;
+		
+		// only keep the bottom 2 for the session
+		loc.sessionArray = [];
+		for (loc.i = 1; loc.i lte 1; loc.i++)
+			if (ArrayLen(loc.breadCrumbs) gte loc.i)
+				loc.sessionArray[loc.i] = loc.breadCrumbs[loc.i]; 
+		
+		sessionCache("breadCrumbs", loc.sessionArray);
+		sessionCache("breadCrumbsController", loc.params.controller);
 	</cfscript>
 	<cfreturn true />
 </cffunction>

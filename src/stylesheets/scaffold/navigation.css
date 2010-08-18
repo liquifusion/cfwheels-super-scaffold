@@ -1,0 +1,121 @@
+#navigation {
+	background:#001D2D;
+	border-bottom:1px solid #f1f1f1;
+	}
+	
+	#navigation ul {
+		list-style:none;
+		margin:0;
+		padding:7px 1.5em 0;
+		}
+		
+		#navigation ul li {
+			display:inline-block;
+			float:left;
+			margin-right:4px;
+			position:relative;
+			z-index:5;
+			}
+			
+			#navigation ul li a {
+				background:#00456A;
+				border-bottom:1px solid #f1f1f1;
+				color:#eee;
+				display:block;
+				font-size:1.2em;
+				line-height:2em;
+				margin-bottom:-1px;
+				padding:0 10px;
+				text-decoration:none;
+				
+				-webkit-border-top-left-radius:7px;
+				-webkit-border-top-right-radius:7px;
+				-moz-border-radius-topleft:7px;
+				-moz-border-radius-topright:7px;
+				border-top-left-radius:7px;
+				border-top-right-radius:7px;				
+				}
+				
+				#navigation ul li a:hover {
+					background:#005b8c;
+				}
+				
+				#navigation ul li a.active {
+					background:#fff;
+					border:1px solid #666;
+					border-bottom:0;
+					color:#264409;
+					font-weight:bold;
+					padding:0 9px;
+				}
+				
+				#navigation ul li.sfHover a {
+					background:#f1f1f1;
+					color:#222;
+				}
+			
+			
+	#navigation ul ul {
+		background:#fff;
+		border-left:1px solid #aaa;
+		border-right:1px solid #aaa;
+		display:none;
+		padding:0;
+		position:absolute;
+		top:30px;
+		width:160px;
+		}
+		
+		#navigation ul li:hover ul, #navigation ul li.sfHover ul {
+			display:block;
+		}
+		
+		#navigation ul ul li {
+			float:none;
+			display:block;
+			margin:0;
+			}
+			
+			#navigation ul ul li a {
+				background:#f1f1f1;
+				border-bottom:1px solid #aaa;
+				color:#666;
+				margin-bottom:0;
+				
+				-webkit-border-top-left-radius:0;
+				-webkit-border-top-right-radius:0;
+				-moz-border-radius-topleft:0;
+				-moz-border-radius-topright:0;
+				border-top-left-radius:0;
+				border-top-right-radius:0;
+				}
+				
+				#navigation ul ul li a:hover {
+					background:#f1f1f1;
+					text-decoration:underline;
+				}
+				
+				#navigation ul ul li a.active {
+					background:#f1f1f1;
+					border:0;
+					border-bottom:1px solid #aaa;
+					font-weight:bold;
+				}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

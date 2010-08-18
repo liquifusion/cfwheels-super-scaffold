@@ -23,7 +23,12 @@
 			
 				#renderFormFields(properties=properties, object=variables[modelName])#
 				
-				<p class="controls">#buttonTag(content="<span>Create</span>", type="submit", class="interface-button save")# <span>or #scaffoldLinkToBack(text="cancel", title="cancel", class="cancel")#</span></p>
+				<p class="controls">
+					#buttonTag(content="<span>Create</span>", type="submit", class="interface-button save")# 
+					<cfif ListFindNoCase($getSetting(name="actions"), "list")>
+						<span>or #scaffoldLinkToBack(text="cancel", title="cancel", class="cancel")#</span>
+					</cfif>
+				</p>
 			
 			#endFormTag()#
 		</div>

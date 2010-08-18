@@ -1,0 +1,41 @@
+#header {
+	background:#001D2D;
+	color:#f1f1f1;
+	padding:.75em 0 0;
+	}
+	
+	#header a {
+		color:#ffc117;
+		}
+		
+		#header a:hover {
+			color:#ffd151;
+			text-decoration:none;
+		}	
+	
+	#header .links {
+		float:right;
+		padding:.75em 1.5em 0 0;
+		}
+		
+		#header .links .welcome {
+			padding-right:10px;
+			}
+			
+			#header .links .welcome strong {
+				color:#fff;
+			}
+	
+	#header .logo {
+		padding-left:1.5em;
+		}
+	
+		#header .logo h2 {
+			color:#ffd151;
+			margin-bottom:0;
+		}
+	
+		#header .logo h3 {
+			color:#fff;
+			margin-bottom:.75em;
+		}

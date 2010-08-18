@@ -1,0 +1,16 @@
+.view-list {
+	padding:0 1.5em;
+	}
+
+	.view-list th {
+		background:transparent;
+		border-bottom:1px solid #ccc;
+	}
+
+	.view-list td {
+		border-bottom:1px solid #ccc;
+		}
+	
+		.view-list tbody tr:last-child td {
+			border-bottom:0;
+		}

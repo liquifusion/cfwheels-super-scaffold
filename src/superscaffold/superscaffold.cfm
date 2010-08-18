@@ -10,7 +10,7 @@
 		variables.$class.superScaffold = {};
 		
 		// translate actions
-		arguments.actions = ListAppend(arguments.actions, "list,search,pagenotfound,accessdenied");
+		arguments.actions = ListAppend(arguments.actions, "pagenotfound,accessdenied");
 		if (ListFindNoCase(arguments.actions, "create"))
 			arguments.actions = ListAppend(arguments.actions, "new");
 		if (ListFindNoCase(arguments.actions, "update"))
@@ -32,8 +32,41 @@
 		scaffoldDelete();
 		scaffoldRoles();
 		
-		filters(through="$verifySessionExists,$setModel,$defaultRequiredParams,$setReturnParams");
+		filters(through="$verifySessionExists,$setModel,$defaultRequiredParams,$setReturnParams,$setBreadCrumbs");
 		filters(through="$verifyScaffoldAccess", except="badRequest,pageNotFound");
+		
+		// setup our default layout for all super scaffold admin areas
+		usesLayout(template="/layouts/default", ajax="/layouts/default.ajax", useDefault=false);
+		
+		// setup our provides plugin
+		provides(formats=arguments.formats);
+	</cfscript>
+</cffunction>
+
+<cffunction name="scaffoldLite" access="public" output="false" returntype="void" mixin="controller">
+	<cfargument name="label" type="string" required="true" hint="the default label for this area of the admin. defaults to the pluralized model name" />
+	<cfargument name="actions" type="string" required="false" hint="Define what actions are available from the list. Only actions present in the list will be available." />
+	<cfargument name="formats" type="string" required="false" hint="I define what formats can be requested from this super scaffold controller." />
+	<cfscript>
+		var loc = {};
+		$args(args=arguments, name="scaffoldLite");
+		variables.$class.superScaffold = {};
+		
+		// translate actions
+		arguments.actions = ListAppend(arguments.actions, "pagenotfound,accessdenied");
+		if (ListFindNoCase(arguments.actions, "create"))
+			arguments.actions = ListAppend(arguments.actions, "new");
+		if (ListFindNoCase(arguments.actions, "update"))
+			arguments.actions = ListAppend(arguments.actions, "edit");	
+		if (ListFindNoCase(arguments.actions, "delete"))
+			arguments.actions = ListAppend(arguments.actions, "destroy");
+		
+		// clean all of our lists and add them to the class data
+		for (loc.item in arguments)
+			if (StructKeyExists(arguments, loc.item))
+				variables.$class.superScaffold[loc.item] = $listClean(arguments[loc.item]);
+		
+		filters(through="$verifySessionExists,$defaultRequiredParams,$setBreadCrumbs");
 		
 		// setup our default layout for all super scaffold admin areas
 		usesLayout(template="/layouts/default", ajax="/layouts/default.ajax", useDefault=false);

@@ -1,0 +1,167 @@
+.interface-button {
+	background:url(/images/scaffold/sprite/buttons.png) no-repeat 0 0;
+	color:#000;
+	display:block;
+	float:left;
+	font-weight:bold;
+	line-height:3em;
+	margin-left:.75em;
+	padding-left:20px;
+	text-decoration:none;
+	}
+	
+	.interface-button span {
+		display:block;
+		background:url(/images/scaffold/sprite/buttons.png) no-repeat 100% -40px;
+		line-height:3em;
+		padding-right:19px;
+	}
+	
+	.interface-button:hover {
+		color:#000;
+		background-position:0 -80px;
+		text-decoration:underline;
+		}
+		
+		.interface-button:hover>span {
+			background-position:100% -120px;
+		}
+		
+		.interface-button span span, interface-button:hover span span {
+			background:url(/images/scaffold/loaders/default.gif) no-repeat 0 50%;
+			padding:0 0 0 22px;
+			margin-left:-6px;
+		}
+	
+	/* for the button tag */
+	button.interface-button {
+		background:url(/images/scaffold/sprite/buttons.png) no-repeat 0 -480px;
+		border:0;
+		cursor:pointer;
+		font-size:1em;
+		margin:0 5px 0 0;
+		padding:0;
+		padding-left:20px;
+		position:relative;
+		}
+		
+		button.interface-button::-moz-focus-inner {
+			border:none;
+			margin-right:-2px;
+		}
+	
+		button.interface-button>span {
+			display:block;
+			background:url(/images/scaffold/sprite/buttons.png) no-repeat 100% -520px;
+			height:36px;
+			line-height:3em;
+			padding-right:19px;
+			position:relative;
+			white-space:no-wrap;
+		}
+	
+		button.interface-button:hover {
+			color:#000;
+			background-position:0 -560px;
+			text-decoration:underline;
+			}
+			
+			button.interface-button:hover>span {
+				background-position:100% -600px;
+			}
+			
+		button.interface-button.save {
+			background-position:0 -640px;
+			padding-left:36px;
+			}
+				
+			button.interface-button.save:hover {
+				background-position:0 -680px;
+				padding-left:36px;
+			}
+			
+		button.interface-button.delete {
+			background-position:0 -720px;
+			padding-left:36px;
+			}
+				
+			button.interface-button.delete:hover {
+				background-position:0 -760px;
+				padding-left:36px;
+			}
+		
+	.interface-button.new {
+		background-position:0 -160px;
+		padding-left:36px;
+		}
+		
+		.interface-button.new:hover {
+			background-position:0 -200px;
+		}
+		
+	.interface-button.back {
+		background-position:0 -240px;
+		padding-left:36px;
+		}
+		
+		.interface-button.back:hover {
+			background-position:0 -280px;
+		}
+		
+	.interface-button.edit {
+		background-position:0 -320px;
+		padding-left:36px;
+		}
+		
+		.interface-button.edit:hover {
+			background-position:0 -360px;
+		}
+		
+	.interface-button.delete {
+		background-position:0 -400px;
+		padding-left:36px;
+		}
+		
+		.interface-button.delete:hover {
+			background-position:0 -440px;
+		}
+
+/* sub-form buttons */
+.sub-form-delete-button {
+	background:url(/images/scaffold/sprite/icons.png) no-repeat -1922px -170px;
+	display:block;
+	font-size:0;
+	height:0;
+	line-height:0;
+	padding-top:28px;
+	text-indent:-9999px;
+	width:18px;
+}
+
+.sub-form-add-button {
+	border:1px solid #c6c6c6;
+	background:#f1f1f1;
+	cursor:pointer;
+	font-family: "Segoe UI", Arial, sans-serif;
+	font-size:1em;
+	font-weight:bold;
+	margin-top:1em;
+	padding:8px;
+
+	-webkit-border-radius: 16px;
+	-moz-border-radius: 16px;
+	border-radius: 16px;
+	}
+	
+	.sub-form-add-button:hover {
+		border:1px solid #FFC117;
+		background:#ffffee;
+	}
+
+
+
+
+
+
+
+

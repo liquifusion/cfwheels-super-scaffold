@@ -3,8 +3,7 @@
 		// we don't use our scaffoldFindByKey here as the edit form 
 		// should be passing through everything we need to save
 		variables[modelName] = modelObject.findByKey(key=params[modelName].id);
-		
-		variables[modelName].setProperties(property=params[modelName]);
+		variables[modelName].setProperties(properties=params[modelName], $useFilterLists=false);
 		
 		$executeScaffoldingCallback(type="beforeUpdate", object=variables[modelName]);
 		

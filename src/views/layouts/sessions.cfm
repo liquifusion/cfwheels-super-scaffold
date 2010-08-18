@@ -10,7 +10,7 @@
 				
 					<div id="body">
 						<div class="container">
-							<div class="span-11 last">
+							<div class="span-12 last">
 								<div style="padding:0 1.5em;">
 									#includeContent()#
 								</div>

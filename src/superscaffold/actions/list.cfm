@@ -12,7 +12,7 @@
 			
 		// add in our search conditions and order clause
 		args.where = $createWhereConditions(model=modelObject);
-		args.order = $createOrderClause();
+		args.order = $createOrderClause(model=modelObject);
 		list = modelObject.scaffoldFindAll(argumentCollection=args);
 		renderWith(list);
 	</cfscript>

@@ -1,9 +1,5 @@
 <cfscript>
-	// setup our bundle data so we can loop through them and create threads to make this go faster
-	$wheels = { bundleArray = [], threadList = "" };
-	
-	// css bundles
-	$wheels.bundleArray[1] = {
+	generateBundle(
 		  type="css"
 		, bundle="scaffold/bundles/core"
 		, compress=true
@@ -20,25 +16,21 @@
 			, scaffold/headings
 			, scaffold/lists
 			, scaffold/navigation
-			, scaffold/view"
-	};
+			, scaffold/view");
 	
-	$wheels.bundleArray[2] = {
+	generateBundle(
 		  type="css"
 		, bundle="scaffold/bundles/ie"
 		, compress=true
-		, sources="scaffold/blueprint/ie"
-	};
+		, sources="scaffold/blueprint/ie");
 	
-	$wheels.bundleArray[3] = {
+	generateBundle(
 		  type="css"
 		, bundle="scaffold/bundles/print"
 		, compress=true
-		, sources="scaffold/blueprint/print"
-	};
-		
-	// js bundle
-	$wheels.bundleArray[4] = {
+		, sources="scaffold/blueprint/print");
+	
+	generateBundle(
 		  type="js"
 		, bundle="scaffold/bundles/core"
 		, compress=true
@@ -56,19 +48,6 @@
 			, scaffold/implementation/list
 			, scaffold/implementation/form
 			, scaffold/implementation/navigation
-			, scaffold/implementation/notices"
-	};
+			, scaffold/implementation/notices");
 </cfscript>
-
-<!--- loop through our array so we can create all of the bundles at once --->
-<cfloop index="$wheels.i" from="1" to="#ArrayLen($wheels.bundleArray)#">
-	<cfset $wheels.threadList = ListAppend($wheels.threadList, Right(CreateUUID(), 8)) />
-	<cfthread action="run" name="#ListLast($wheels.threadList)#" bundle="#$wheels.bundleArray[$wheels.i]#">
-		<cfset generateBundle(argumentCollection=attributes.bundle) />
-	</cfthread>
-</cfloop>
-
-<cfthread action="join" name="#$wheels.threadList#" timeout="10000" />
-
-<cfset StructDelete(variables, "$wheels") />
 

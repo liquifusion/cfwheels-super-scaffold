@@ -14,7 +14,8 @@
 			application.wheels.scaffoldCopyrightStartYear = Year(Now());
 	
 		// defaults for our init() method calls --->
-		application.wheels.functions.scaffold = { actions = "create,update,delete,view,nested", formats = "html,xml,json,csv,xls" };
+		application.wheels.functions.scaffold = { actions = "list,search,create,update,delete,view,nested", formats = "html,xml,json,csv,xls" };
+		application.wheels.functions.scaffoldLite = { actions = "", formats = "html,xml,json,csv,xls", lite=true };
 		application.wheels.functions.scaffoldList = { paginationEnabled = true, paginationWindowSize = 3, paginationPerPage = 20, sorting = "primaryKeys", sortingDirection = "asc" };
 		application.wheels.functions.scaffoldView = { returnToAction = "list" };
 		application.wheels.functions.scaffoldSearch = { textSearch = "full" };
@@ -41,6 +42,7 @@
 		application.wheels.appScaffoldPath = ListAppend(loc.rootPath, application.wheels.configPath, "/") & "/app.cfm";
 		application.wheels.routesScaffoldPath = ListAppend(loc.rootPath, application.wheels.configPath, "/") & "/routes.cfm";
 		application.wheels.onApplicationStartScaffoldPath = ListAppend(loc.rootPath, application.wheels.eventPath, "/") & "/onapplicationstart.cfm";
+		application.wheels.dbPath = ListAppend(loc.rootPath, "db", "/");
 		application.wheels.imageScaffoldPath = ListAppend(loc.rootPath, application.wheels.imagePath, "/") & "/scaffold";
 		application.wheels.pluginScaffoldAssetPath = ListAppend(loc.rootPath, application.wheels.pluginPath, "/") & "/superscaffold";
 		application.wheels.javascriptScaffoldPath = ListAppend(loc.rootPath, application.wheels.javascriptPath, "/") & "/scaffold";
@@ -53,9 +55,10 @@
 		application.wheels.javascriptScaffoldPathExpanded = ExpandPath(application.wheels.javascriptScaffoldPath);
 		application.wheels.stylesheetScaffoldPathExpanded = ExpandPath(application.wheels.stylesheetScaffoldPath);
 	
-		application.wheels.pluginImageAssetPathExpanded = ExpandPath(application.wheels.pluginScaffoldAssetPath & "/images/scaffold.zip");
-		application.wheels.pluginJavascriptAssetPathExpanded = ExpandPath(application.wheels.pluginScaffoldAssetPath & "/javascripts/scaffold.zip");
-		application.wheels.pluginStylesheetsAssetPathExpanded = ExpandPath(application.wheels.pluginScaffoldAssetPath & "/stylesheets/scaffold.zip");
+		application.wheels.pluginDBPathExpanded = ExpandPath(application.wheels.pluginScaffoldAssetPath & "/db");
+		application.wheels.pluginImageAssetPathExpanded = ExpandPath(application.wheels.pluginScaffoldAssetPath & "/images/scaffold");
+		application.wheels.pluginJavascriptAssetPathExpanded = ExpandPath(application.wheels.pluginScaffoldAssetPath & "/javascripts/scaffold");
+		application.wheels.pluginStylesheetsAssetPathExpanded = ExpandPath(application.wheels.pluginScaffoldAssetPath & "/stylesheets/scaffold");
 		
 		// let's have two controller paths so we can have some default controllers for the super scaffold plugin
 		application.wheels.controllerPath="controllers,plugins/superscaffold/controllers";

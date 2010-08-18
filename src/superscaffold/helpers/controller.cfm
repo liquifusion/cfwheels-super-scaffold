@@ -6,8 +6,7 @@
 		var callbackMethod = false;
 		argments.action = (arguments.action == "destroy") ? "delete" : arguments.action;
 		
-		callbackMethod = $getSetting(name=arguments.type, section=arguments.action, searchRoot=false);
-		
+		callbackMethod = $getSetting(name=arguments.type, sectionName=arguments.action, searchRoot=false);
 		if (callbackMethod != false && StructKeyExists(this, callbackMethod))
 			$invoke(method=callbackMethod, object=arguments.object);
 	</cfscript>
@@ -34,11 +33,11 @@
 
 <cffunction name="$doPagination" access="public" output="false" returntype="boolean" mixin="controller">
 	<cfscript>
-		var returnValue = false;
-		if ($getSetting(name="paginationEnabled", sectionName="list") && (!StructKeyExists(params, "format") || params.format == "html"))
-			returnValue = true;
+		var loc = { returnValue = false, paginationEnabled = $getSetting(name="paginationEnabled", sectionName="list") };
+		if (IsBoolean(loc.paginationEnabled) && loc.paginationEnabled && (!StructKeyExists(params, "format") || params.format == "html"))
+			loc.returnValue = true;
 	</cfscript>
-	<cfreturn returnValue />
+	<cfreturn loc.returnValue />
 </cffunction>
 
 <cffunction name="$createWhereConditions" access="public" output="false" returntype="string" mixin="controller">
@@ -96,8 +95,9 @@
 </cffunction>
 
 <cffunction name="$createOrderClause" access="public" output="false" returntype="string" mixin="controller">
+	<cfargument name="model" type="component" required="true" />
 	<cfscript>
-		params.s = (params.s == "primaryKeys") ? model.primaryKey() : params.s;
+		params.s = (params.s == "primaryKeys") ? arguments.model.primaryKey() : params.s;
 	</cfscript>
 	<cfreturn params.s & " " & params.d />
 </cffunction>

@@ -7,7 +7,7 @@
 			if (!StructKeyExists(loc.object, loc.item))
 			{
 				if (variables.wheels.class.associations[loc.item].type == "hasMany")
-					loc.object[loc.item] = [];
+					loc.object[loc.item] = [ model(variables.wheels.class.associations[loc.item].modelName).new() ];
 				else if (variables.wheels.class.associations[loc.item].type == "hasOne")
 					loc.object[loc.item] = model(variables.wheels.class.associations[loc.item].modelName).new();
 			}
@@ -17,6 +17,7 @@
 </cffunction>
 
 <cffunction name="scaffoldFindByKey" returntype="any" access="public" output="false" mixin="model">
+	<cfargument name="addNewAssociationObjects" type="boolean" required="false" default="true" />
 	<cfscript>
 		var loc = { associations = $associationList(displayFor="view,new,edit,delete") };
 		loc.object = findByKey(argumentCollection=arguments);
@@ -33,9 +34,23 @@
 				, returnAs = "objects"
 			};
 			
+			if (StructKeyExists(loc.association, "sortOrder") && Len(loc.association.sortOrder))
+				loc.args.order = loc.association.sortOrder;
+			
 			// for some reason calling $invoke will NOT work with the loc.object reference, 
 			// calling onMissingMethod directly does though, weird
-			loc.object[loc.associationName] = loc.object.onMissingMethod(loc.associationName, loc.args);
+			
+			if (StructKeyExists(loc.association, "method") && StructKeyExists(loc.object, loc.association.method))
+				loc.data = $invoke(componentReference=loc.object, method=loc.association.method);
+			else
+				loc.data = loc.object.onMissingMethod(loc.associationName, loc.args);
+			
+			if (loc.association.type == "hasMany" && (!IsArray(loc.data) || ArrayIsEmpty(loc.data)) && arguments.addNewAssociationObjects)
+				loc.object[loc.associationName] = [ model(loc.association.modelName).new() ];
+			else if (loc.association.type == "hasOne" && !IsObject(loc.data) && arguments.addNewAssociationObjects)
+				loc.object[loc.associationName] = model(loc.association.modelName).new();
+			else
+				loc.object[loc.associationName] = loc.data;
 		}
 	</cfscript>
 	<cfreturn loc.object />

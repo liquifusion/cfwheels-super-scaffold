@@ -1,0 +1,93 @@
+#body {}
+		
+	#body .container {
+		background:url(/images/scaffold/sprite/icons.png) repeat-y 0 0;
+		min-height:288px;
+		padding:1.5em 34px;
+		width:902px;
+	}
+		
+	#body .container.bottom {
+		background-position:-970px 0;
+		height:36px;
+		min-height:0;
+		padding-top:0;
+		padding-bottom:0;
+	}
+	
+	#body .bread-crumbs {
+		line-height:3em;
+		}
+		
+		#body .bread-crumbs p {
+			margin-bottom:0;
+		}
+		
+		#body .bread-crumbs a.loading {
+			background:#fff url(/images/scaffold/loaders/default.gif) no-repeat 100% 50%;
+			padding-right:20px;
+		}
+
+	#body .links {
+		float:right;
+		}
+		
+	#body .container #loading-container {
+		 position:relative;
+	}
+	
+	#body .animate-away {
+		background:#fff;
+		left:-24px;
+		overflow:hidden;
+		padding:24px;
+		position:absolute;
+		top:0;
+		width:902px;
+	}
+	
+	#body .message-container {
+		margin:0;
+		overflow:hidden;
+		}
+		
+		#body .message-container div {
+			margin:0;
+		}
+		
+		.enhanced #body .message-container div {
+			cursor:pointer;
+		}
+
+/* sessions body */
+.sessions #body {
+	padding-top:120px;
+	}
+
+	.sessions #body .container {
+		background:#fff;
+		border:1px solid #ccc;
+		margin-bottom:1.5em;
+		min-height:0;
+		padding:1.5em 0;
+		width:446px;
+	}
+		
+	.sessions #body .container.bottom {
+		background:#fff;
+		border:0;
+		height:0;
+		margin-bottom:0;
+		min-height:0;
+		padding-top:0;
+		padding-bottom:0;
+	}
+	
+	.sessions #body .message-container {
+		margin:0 0 1.5em;
+		overflow:hidden;
+		}
+
+
+
+		

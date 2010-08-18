@@ -1,0 +1,201 @@
+form {
+	background:#f1f1f1;
+	border:1px solid #ccc;
+	padding:1.5em 1.5em 0 1.5em;
+	
+	-webkit-border-radius:7px;
+	-moz-border-radius:7px;
+	border-radius:7px;
+	}
+	
+	form.delete-form {
+		background:transparent;
+		border:0;
+		padding:0;
+	}
+	
+	form textarea, form input.text, form select {
+		font-family: "Segoe UI", Arial, sans-serif;
+		font-size:1.1em;
+		margin:0;
+		padding:4px;
+		-webkit-border-radius:4px;
+		-moz-border-radius:4px;
+		border-radius:4px;
+	}
+	
+	form input.text {
+		padding:5px;
+		}
+		
+		.sessions form input.text {
+			width:240px;
+		}
+	
+	form p {
+		margin:0;
+		padding-bottom:1.5em;
+		}
+
+		form p:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
+		form p {display:block;}
+		
+		form p.controls {
+			line-height:3em;
+			padding-left:11.5em;
+		}
+		
+		form .checkbox {
+			padding-left:11.5em;
+		}
+	
+		form p label {
+			float:left;
+			line-height:26px;
+			margin-right:1.5em;
+			text-align:right;
+			width:10em;
+			}
+			
+			.sessions form p label {
+				width:6.5em;
+			}
+			
+			form .checkbox label {
+				float:none;
+				font-weight:normal;
+				line-height:1.5em;
+				margin:0;
+				padding:0 0 0 5px;
+			}
+		
+		form p span.description {
+			color:#777;
+			font-style:italic;
+			padding-left:1.5em;
+		}
+		
+		form p a.cancel {
+			display:inline-block;
+			padding-right:2em;
+			}
+			
+			form p a.cancel.loading {
+				background:transparent url(/images/scaffold/loaders/searching.gif) no-repeat 100% 50%;
+			}
+		
+		form .field-with-errors p {
+			padding-bottom:0;
+			}
+			
+			form .field-with-errors input.text, form .field-with-errors select, form .field-with-errors textarea {
+				border-color:#8a1f11;
+			}
+			
+		form span.error-message {
+			color:#8A1F11;
+			display:block;
+			padding:0 0 1.5em 11.5em;
+		}
+		
+		form fieldset > p, form fieldset > .field-with-errors {
+			border-top:1px solid #ccc;
+			padding:1.5em 0;
+		}
+		
+		form fieldset > legend + p, form fieldset > legend + .field-with-errors {
+			border:0;
+			padding-top:0;
+			}
+			
+			form fieldset > .field-with-errors {
+				padding-bottom:0;
+				}
+				
+				form fieldset > .field-with-errors p {
+					padding-bottom:0;
+				}
+	
+	form p {
+		margin:0;
+		padding-bottom:1.5em;
+		}
+
+		form p:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
+		form p {display:block;}
+		
+		form p.controls {
+			padding-left:11.5em;
+			}
+			
+			.sessions form p.controls {
+				padding-left:8em;
+			}
+		
+		form p.checkbox
+	
+		form p label {
+			float:left;
+			width:120px;
+			text-align:right;
+			margin-right:1.5em;
+		}
+		
+		form p span.description {
+			color:#777;
+			font-style:italic;
+			padding-left:1.5em;
+		}
+			
+		form span.error-message {
+			color:#8A1F11;
+			display:block;
+			padding:0 0 1.5em 11.5em;
+		}
+		
+	form .sub-form {
+		padding:0 1.5em;
+		width:auto;
+		}
+		
+		form .sub-form thead {}
+		
+			form .sub-form thead th {
+				background:transparent;
+				padding:2px;
+			}
+		
+		form .sub-form tbody {}
+		
+			form .sub-form tbody td {
+				background:transparent;
+				padding:2px;
+				vertical-align:top;
+				}
+			
+				form .sub-form tbody td p {
+					padding:0;
+					}
+				
+					form .sub-form tbody td p label {
+						display:none;
+					}
+				
+					form .sub-form tbody td p input.text, form .sub-form tbody p select {
+						width:100px;
+					}
+				
+					form .sub-form tbody td span.error-message {
+						padding:0;
+					}
+			
+
+
+
+
+
+
+
+
+
+

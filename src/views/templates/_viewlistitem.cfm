@@ -3,7 +3,6 @@
 		<cfloop array="#loc.properties#" index="loc.property">
 			<td class="#loc.property.property#">
 				#displayProperty(object=loc[modelName], property=loc.property)#
-				
 			</td>
 		</cfloop>
 		<td class="action-links">

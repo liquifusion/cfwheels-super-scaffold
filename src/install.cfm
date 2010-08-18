@@ -1,19 +1,29 @@
 <cfscript>
-	// create our directories if needed
-	if (!DirectoryExists(get("imageScaffoldPathExpanded")))
-		$directory(action="create", directory=get("imageScaffoldPathExpanded"));
-	if (!DirectoryExists(get("javascriptScaffoldPathExpanded")))
-		$directory(action="create", directory=get("javascriptScaffoldPathExpanded"));
-	if (!DirectoryExists(get("stylesheetScaffoldPathExpanded")))
-		$directory(action="create", directory=get("stylesheetScaffoldPathExpanded"));
-
-	// unzip our assets into the proper locations
-	$zip(action="unzip", file=get("pluginImageAssetPathExpanded"), destination=get("imageScaffoldPathExpanded"), overwrite=false);
-	$zip(action="unzip", file=get("pluginJavascriptAssetPathExpanded"), destination=get("javascriptScaffoldPathExpanded"), overwrite=false);
-	$zip(action="unzip", file=get("pluginStylesheetsAssetPathExpanded"), destination=get("stylesheetScaffoldPathExpanded"), overwrite=false);
+	$wheels = { array = [], i = 1 };
+	$wheels.assets = [
+		  { directory = get("imageScaffoldPathExpanded"), source = get("pluginImageAssetPathExpanded") }
+		, { directory = get("javascriptScaffoldPathExpanded"), source = get("pluginJavascriptAssetPathExpanded") }
+		, { directory = get("stylesheetScaffoldPathExpanded"), source = get("pluginStylesheetsAssetPathExpanded") }
+	];
+	
+	for ($wheels.i = 1; $wheels.i lte ArrayLen($wheels.assets); $wheels.i++)
+	{
+		$wheels.item = $wheels.assets[$wheels.i];
+		$wheels.file = GetTempDirectory() & "zip.zip";
+		
+		// make sure we have our directory
+		if (!DirectoryExists($wheels.item.directory))
+			$directory(action="create", directory=$wheels.item.directory);
+		
+		// first get our source and zip it up into the temp directory
+		$zip(action="zip", file=$wheels.file, source=$wheels.item.source, overwrite=true);
+		// unzip the files into our plugin directory so we can put them into revision control
+		$zip(action="unzip", file=$wheels.file, destination=$wheels.item.directory, overwrite=false);
+		// clean up after ourselves
+		$file(action="delete", file=$wheels.file);
+	}
 	
 	// add our includes into config/routes.cfm and events/onapplicationstart.cfm
-	$wheels = { array = [], i = 1 };
 	$wheels.array[1] = { includeString = '[cfinclude template="#get("pluginPath")#/superscaffold/config/app.cfm" /]', file = get("appScaffoldPathExpanded") };
 	$wheels.array[2] = { includeString = '[cfinclude template="../#get("pluginPath")#/superscaffold/config/routes.cfm" /]', file = get("routesScaffoldPathExpanded") };
 	$wheels.array[3] = { includeString = '[cfinclude template="../#get("pluginPath")#/superscaffold/events/onapplicationstart.cfm" /]', file = get("onApplicationStartScaffoldPathExpanded") };
@@ -34,8 +44,11 @@
 		}
 	}
 	
+	// setup our initial data
+	model("role").deleteAll();
+	model("user").deleteAll();
 	role = model("role").create(title="Admin", description="This is the description for the admin roles that explains what anyone in the role can access.");
 	model("user").create(roleId=role.id, firstName="Admin", lastName="Admin", emailAddress="admin@admin.com", authenticationToken="admin");
 	
-	$location(url="/admin?reload=true", addtoken=false);
+	$location(url="/admin/sessions/new?reload=true&firstinstall=$kc7g0b!", addtoken=false);
 </cfscript>

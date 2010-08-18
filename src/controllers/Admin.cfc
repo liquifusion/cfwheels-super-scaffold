@@ -2,8 +2,7 @@
 
 	<cffunction name="init" access="public" output="false" returntype="void">
 		<cfscript>
-			filters(through="$verifySessionExists");
-			usesLayout(template="/layouts/default", useDefault=false);
+			scaffoldLite(label="", actions="index", formats="html");
 		</cfscript>
 	</cffunction>
 	

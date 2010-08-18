@@ -1,0 +1,107 @@
+html {
+	background:#e5e5e5;
+}
+
+body {
+	background:#e5e5e5;
+	font-family: "Segoe UI", Arial, sans-serif;
+}
+
+a {
+	color:#2978a2;
+	}
+	
+	a:hover {
+		color:#2978a2;
+		text-decoration:none;
+	}
+	
+.container {
+	width:950px;
+	padding:0 10px;
+}
+
+.strong-notice {
+	color:#8A1F11;
+	font-style:italic;
+	text-decoration:underline;
+	text-transform:uppercase;
+}
+
+.large {
+	line-height:1.25em;
+}
+
+.soft {
+	color:#999;
+	font-style:italic;
+}
+
+/*  boooooo!!!! fieldsets and legends don't like to be styled in firefox
+    http://www.tyssendesign.com.au/articles/css/legends-of-style/
+*/
+
+.fieldset {
+	background:#fff;
+	border:1px solid #ccc;
+	margin:3em 0 1.5em 0;
+	padding:2.925em 0 0;
+	position:relative;
+	-webkit-border-radius:6px;
+	-moz-border-radius:6px;
+	border-radius:6px;
+}
+
+	.fieldset fieldset {
+		border:0;
+		margin:0;
+		padding:0;
+	}
+	
+	/* fieldset legends don't like to be styled so we style a span inside the legend instead :( */
+	.fieldset fieldset legend {
+		border:0;
+	}
+	
+		.fieldset fieldset legend span {
+			background:#f1f1f1 url(/images/scaffold/sprite/icons.png) no-repeat -970px -100px;
+			border:1px solid #ccc;
+			display:block;
+			line-height:2.5em;
+			margin-left:1.5em;
+			padding:0 10px;
+			position:absolute;
+			top:-1.425em;
+		
+			-webkit-border-radius:5px;
+			-moz-border-radius:5px;
+			border-radius:5px;
+		}
+	
+	.fieldset fieldset fieldset {
+		margin-left:1.5em;
+		margin-right:1.5em;
+	}
+	
+dl {
+	margin-bottom:0;
+	padding:0 1.5em;
+	}
+
+	dl dt {
+		clear:left;
+		float:left;
+		margin-right:1.5em;
+		padding:0 0 1.5em;
+		text-align:right;
+		width:120px;
+	}
+
+	dl dd {
+		margin:0;
+		padding:0 0 1.5em;
+		width:100%;
+	}
+
+
+

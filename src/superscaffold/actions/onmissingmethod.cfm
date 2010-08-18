@@ -3,7 +3,7 @@
 	<cfargument name="missingMethodArguments" type="struct" required="true" />
 	<cfscript>
 		var methodToCall = "do" & params.action;
-		if (StructKeyExists(variables.$class, "superscaffold"))
+		if (StructKeyExists(variables.$class, "superscaffold") && !StructKeyExists(variables.$class.superscaffold, "lite"))
 		{
 			// see if the method exists on this controller
 			if (StructKeyExists(this, methodToCall) && IsCustomFunction(this[methodToCall]))

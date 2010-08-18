@@ -2,7 +2,7 @@
 
 	<cffunction name="init" access="public" output="false" returntype="void">
 		<cfscript>
-			scaffold(modelName="user", actions="create,update,delete,view,nested,changePassword,savepassword");
+			scaffold(modelName="user", actions="list,search,create,update,delete,view,nested,changePassword,savepassword");
 			scaffoldList(sorting="lastName", paginationPerPage=10);
 		</cfscript>
 	</cffunction>

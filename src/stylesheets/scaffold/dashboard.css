@@ -1,0 +1,44 @@
+#body .deep-links {}
+
+	#body .deep-links ul {
+		border:1px solid #ccc;
+		border-bottom:0;
+		list-style:none;
+		margin:0 0 1.5em;
+		padding:0;
+		}
+
+		#body .deep-links ul li {
+			background:#f1f1f1;
+			padding:.75em 0 0;		
+			}
+		
+			#body .deep-links ul li .quick-links {
+				float:right;
+				padding-right:1.5em;
+			}
+			
+			#body .deep-links ul li h3 {
+				border-bottom:1px solid #ccc;
+				margin-bottom:0;
+				padding: 0 0 .5em 1em;
+			}
+	
+		#body .deep-links ul ul {
+			border-width:0 0 1px 0;
+			margin-bottom:0;
+			}
+			
+			#body .deep-links ul ul li {
+				background:#fff;
+				border-bottom:1px solid #ccc;
+				padding-left:1.5em;
+				}
+				
+				#body .deep-links ul ul li h4 {
+					margin-bottom:0;
+					padding: 0 0 .5em 1em;
+				}
+			
+	
+			

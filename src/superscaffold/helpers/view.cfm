@@ -23,7 +23,6 @@
 		
 		loc.controllerName = loc.controller.$controllerName();
 		
-		
 		loc.returnValue &= scaffoldLinkToView(controller=loc.controllerName, key=arguments.key);
 		loc.returnValue &= scaffoldLinkToEdit(text="Edit", controller=loc.controllerName, key=arguments.key, class="edit");
 		loc.returnValue &= scaffoldLinkToDelete(controller=loc.controllerName, key=arguments.key, class="edit");
@@ -283,6 +282,10 @@
 			
 			case "hasOne":
 			{
+				loc.keys = arguments.object[loc.property].primaryKey();
+				for (loc.i = 1; loc.i lte ListLen(loc.keys); loc.i++)
+					if (StructKeyExists(arguments.object[loc.property], ListGetAt(loc.keys, loc.i)))
+						loc.returnValue &= hiddenField(objectName=arguments.name, property=ListGetAt(loc.keys, loc.i), association=loc.property);
 				loc.returnValue &= renderFormFields(properties=arguments.object[loc.property].displayPropertiesFor(params.action), object=arguments.object[loc.property], nesting=arguments.name);
 				break;
 			}
@@ -325,10 +328,7 @@
 		loc.nesting = arguments.baseObject.$modelName();
 		loc.properties = arguments.object.displayPropertiesFor(arguments.action);
 		$loadDataForProperties(properties=loc.properties);
-		// make sure we have a single row to display no matter what
-		if (ArrayIsEmpty(arguments.baseObject[arguments.association]))
-			ArrayAppend(arguments.baseObject[arguments.association], model(arguments.object.$modelName()).new());
-		// our last array item will be hidden in html comments so always add it on
+		// we need an extra model on the end for our hidden row
 		ArrayAppend(arguments.baseObject[arguments.association], model(arguments.object.$modelName()).new());
 		loc.models = arguments.baseObject[arguments.association];
 	</cfscript>
@@ -387,8 +387,9 @@
 		loc.displayOverrideMethod = loc.modelName & arguments.property.property & "Display";
 		
 		// add the value to the arguments to be able to easily get it in display overrides
-		arguments.value = arguments.object[arguments.property.property];
-		
+		arguments.value = "";
+		if (StructKeyExists(arguments.object, arguments.property.property))
+			arguments.value = arguments.object[arguments.property.property];
 		
 		if (StructKeyExists(variables, loc.displayOverrideMethod) && (!IsSimpleValue(arguments.value) || Len(arguments.value)))
 			returnValue = $invoke(method=loc.displayOverrideMethod, argumentCollection=arguments);
@@ -453,6 +454,9 @@
 <cffunction name="scaffoldURLFor" access="public" output="false" returntype="string" mixin="controller">
 	<cfargument name="route" type="string" required="false" default="superScaffold" />
 	<cfargument name="controller" type="string" required="false" default="#variables.$class.name#" />
+	<cfif StructKeyExists(arguments, "action") and arguments.action eq "list">
+		<cfset StructDelete(arguments, "action") />
+	</cfif>
 	<cfreturn URLFor(argumentCollection=arguments) />
 </cffunction>
 
@@ -462,12 +466,14 @@
 	<cfreturn linkTo(argumentCollection=arguments) & " " />
 </cffunction>
 
-<cffunction name="scaffoldLinkToBack" access="public" output="false" returntype="string" mixin="controller">
+<cffunction name="scaffoldLinkToBack" access="public" output="false" returntype="any" mixin="controller">
 	<cfargument name="text" type="string" required="false" default="<span>Back</span>" />
 	<cfargument name="title" type="string" required="false" default="#stripTags(arguments.text)#" />
 	<cfargument name="class" type="string" required="false" default="interface-button back" />
 	<cfargument name="controllerParams" type="struct" required="false" default="#variables.params#" />
 	<cfscript>
+		if (!ListFindNoCase($getSetting(name="actions"), "list"))
+			return;
 		if (ListLen(arguments.controllerParams.returnParams) gt 1 && arguments.controllerParams.action == "nested")
 			return linkTo(text=arguments.text, title=arguments.title, class=arguments.class, href=ListGetAt(arguments.controllerParams.returnParams, 2));
 		else if (ListLen(arguments.controllerParams.returnParams) && ListFirst(arguments.controllerParams.returnParams) != scaffoldURLFor(argumentCollection=arguments.controllerParams))
@@ -477,36 +483,44 @@
 	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
 </cffunction>
 
-<cffunction name="scaffoldLinkToDelete" access="public" output="false" returntype="string" mixin="controller">
+<cffunction name="scaffoldLinkToDelete" access="public" output="false" returntype="any" mixin="controller">
 	<cfargument name="text" type="string" required="false" default="<span>Delete</span>" />
 	<cfargument name="title" type="string" required="false" default="#stripTags(arguments.text)#" />
 	<cfargument name="action" type="string" required="false" default="delete" />
 	<cfargument name="class" type="string" required="false" default="interface-button delete" />
-	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
+	<cfif ListFindNoCase($getSetting(name="actions"), "delete")>
+		<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
+	</cfif>
 </cffunction>
 
-<cffunction name="scaffoldLinkToEdit" access="public" output="false" returntype="string" mixin="controller">
+<cffunction name="scaffoldLinkToEdit" access="public" output="false" returntype="any" mixin="controller">
 	<cfargument name="text" type="string" required="false" default="<span>Edit this Object</span>" />
 	<cfargument name="title" type="string" required="false" default="#stripTags(arguments.text)#" />
 	<cfargument name="action" type="string" required="false" default="edit" />
 	<cfargument name="class" type="string" required="false" default="interface-button edit" />
-	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
+	<cfif ListFindNoCase($getSetting(name="actions"), "edit")>
+		<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
+	</cfif>
 </cffunction>
 
-<cffunction name="scaffoldLinkToNew" access="public" output="false" returntype="string" mixin="controller">
+<cffunction name="scaffoldLinkToNew" access="public" output="false" returntype="any" mixin="controller">
 	<cfargument name="text" type="string" required="false" default="<span>Create a new Object</span>" />
 	<cfargument name="title" type="string" required="false" default="#stripTags(arguments.text)#" />
 	<cfargument name="action" type="string" required="false" default="new" />
 	<cfargument name="class" type="string" required="false" default="interface-button new" />
-	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
+	<cfif ListFindNoCase($getSetting(name="actions"), "new")>
+		<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
+	</cfif>
 </cffunction>
 
-<cffunction name="scaffoldLinkToView" access="public" output="false" returntype="string" mixin="controller">
+<cffunction name="scaffoldLinkToView" access="public" output="false" returntype="any" mixin="controller">
 	<cfargument name="text" type="string" required="false" default="View" />
 	<cfargument name="title" type="string" required="false" default="#arguments.text#" />
 	<cfargument name="action" type="string" required="false" default="view" />
 	<cfargument name="class" type="string" required="false" default="view" />
-	<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
+	<cfif ListFindNoCase($getSetting(name="actions"), "view")>
+		<cfreturn scaffoldLinkTo(argumentCollection=arguments) />
+	</cfif>
 </cffunction>
 
 <cffunction name="scaffoldNavigationLinkTo" access="public" output="false" returntype="string" mixin="controller">
@@ -523,3 +537,15 @@
 	</cfscript>
 	<cfreturn linkTo(argumentCollection=arguments) />
 </cffunction>
+
+
+
+
+
+
+
+
+
+
+
+
