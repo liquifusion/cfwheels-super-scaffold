@@ -24,7 +24,8 @@
 
 <cffunction name="$foreignKeyForAssociation" access="public" output="false" returntype="string" mixin="model">
 	<cfargument name="association" type="string" required="true" />
-	<cfset var expandedAssociation = $expandedAssociations(arguments.association)[1] />
+	<cfset var expandedAssociation = $expandedAssociations(arguments.association) />
+	<cfset expandedAssociation = expandedAssociation[1] />
 	<cfreturn expandedAssociation.foreignKey />
 </cffunction>
 

@@ -121,14 +121,16 @@
 			for (loc.i = ListLen(loc.returnParams); loc.i gte 1; loc.i--)
 			{
 				loc.returnParam = ListGetAt(loc.returnParams, loc.i);
-				ArrayAppend(loc.breadCrumbs, { text = humanize(ListLast(loc.returnParam, "/")), href = loc.returnParam });
+				loc.a = { text = humanize(ListLast(loc.returnParam, "/")), href = loc.returnParam };
+				ArrayAppend(loc.breadCrumbs, loc.a);
 			}
 		}
 		
 		if (!ListFindNoCase("nested,list,index", arguments.params.action))
 		{
 			loc.text = humanize(arguments.params.action);
-			ArrayAppend(loc.breadCrumbs, { text = loc.text , href = scaffoldURLFor(argumentCollection=arguments.params) });
+			loc.a = { text = loc.text , href = scaffoldURLFor(argumentCollection=arguments.params) };
+			ArrayAppend(loc.breadCrumbs, loc.a);
 		}
 		
 		params.breadCrumbs = loc.breadCrumbs;

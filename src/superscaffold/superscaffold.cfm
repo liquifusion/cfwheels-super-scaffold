@@ -6,7 +6,10 @@
 	<cfscript>
 		var loc = {};
 		$args(args=arguments, name="scaffold");
-		arguments.label = (StructKeyExists(arguments, "label")) ? arguments.label : capitalize(humanize(pluralize(arguments.modelName)));
+		if (!StructKeyExists(arguments, "label"))
+		{
+			arguments.label = capitalize(humanize(pluralize(arguments.modelName)));
+		}
 		variables.$class.superScaffold = {};
 		
 		// translate actions

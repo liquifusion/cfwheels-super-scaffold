@@ -6,7 +6,11 @@
 		if ($doPagination())
 		{
 			args.perPage = $getSetting(name="paginationPerPage", sectionName="list");
-			args.page = (StructKeyExists(params, "p") && IsNumeric(params.p)) ? params.p : 1;
+			args.page = 1;
+			if (StructKeyExists(params, "p") && IsNumeric(params.p))
+			{
+				args.page = params.p;
+			}
 		}
 		
 		args.where = $createWhereConditions(model=associationObject);

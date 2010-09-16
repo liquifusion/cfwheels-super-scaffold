@@ -1,6 +1,9 @@
 <cffunction name="startFieldsetTag" access="public" output="false" returntype="string" mixin="controller">
 	<cfargument name="title" type="string" required="true" />
-	<cfset var returnValue = $tag(name="div", attributes ={ class="fieldset" }) />
+	<cfset var returnValue = "" />
+	<cfset var loc = {} />
+	<cfset loc.attributes = { class="fieldset" }>
+	<cfset returnValue = $tag(name="div", attributes=loc.attributes) />
 	<cfset returnValue &= $tag(name="fieldset") />
 	<cfset returnValue &= $element(name="legend", content=$element(name="span", content=arguments.title)) />
 	<cfreturn returnValue />
@@ -422,9 +425,12 @@
 <cffunction name="displayHeading" access="public" output="false" returntype="string" mixin="controller">
 	<cfargument name="action" type="string" required="false" default="#variables.params.action#" />
 	<cfscript>
-		var loc = {
-			action = (arguments.action == "index") ? "list" : arguments.action
-		};
+		var loc = {};
+		loc.action = arguments.action;
+		if (arguments.action == "index")
+		{
+			loc.action = "list";
+		}
 		loc.heading = $getSetting(name="label", sectionName=arguments.action, searchRoot=false);
 		
 		if (!Len(loc.heading))

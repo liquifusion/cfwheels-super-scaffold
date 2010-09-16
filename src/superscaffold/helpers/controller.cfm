@@ -4,7 +4,10 @@
 	<cfargument name="action" type="string" required="false" default="#variables.params.action#" />
 	<cfscript>
 		var callbackMethod = false;
-		argments.action = (arguments.action == "destroy") ? "delete" : arguments.action;
+		if (arguments.action == "destroy")
+		{
+			arguments.action = "delete";
+		}
 		
 		callbackMethod = $getSetting(name=arguments.type, sectionName=arguments.action, searchRoot=false);
 		if (callbackMethod != false && StructKeyExists(this, callbackMethod))
@@ -97,7 +100,10 @@
 <cffunction name="$createOrderClause" access="public" output="false" returntype="string" mixin="controller">
 	<cfargument name="model" type="component" required="true" />
 	<cfscript>
-		params.s = (params.s == "primaryKeys") ? arguments.model.primaryKey() : params.s;
+		if (params.s == "primaryKeys")
+		{
+			params.s = arguments.model.primaryKey();
+		}
 	</cfscript>
 	<cfreturn params.s & " " & params.d />
 </cffunction>

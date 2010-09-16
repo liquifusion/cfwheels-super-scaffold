@@ -1,13 +1,16 @@
 <cffunction name="doList" access="public" output="false" returntype="void" mixin="controller">
+	<cfset var args = { handle = "list", returnAs = "objects" }>
 	<cfparam name="params.page" default="1" />
 	<cfscript>
-		var args = { handle = "list", returnAs = "objects" };
-		
 		// set our pagination data if we need it
 		if ($doPagination())
 		{
 			args.perPage = $getSetting(name="paginationPerPage", sectionName="list");
-			args.page = (StructKeyExists(params, "p") && IsNumeric(params.p)) ? params.p : 1;
+			args.page = 1;
+			if (StructKeyExists(params, "p") && IsNumeric(params.p))
+			{
+				args.page = params.p;
+			}
 		}
 			
 		// add in our search conditions and order clause

@@ -99,7 +99,8 @@
 			loc.item = ListGetAt(loc.keyList, loc.i);
 			if (StructKeyExists(variables.wheels.class.associations[loc.item], "displayOn") && ListFindNoCase(variables.wheels.class.associations[loc.item].displayOn, arguments.area))
 			{
-				loc.list[variables.wheels.class.associations[loc.item].order] = $expandedAssociations(loc.item)[1];
+				loc.a = $expandedAssociations(loc.item);
+				loc.list[variables.wheels.class.associations[loc.item].order] = loc.a[1];
 				loc.list[variables.wheels.class.associations[loc.item].order].property = loc.item;
 			}
 		}
@@ -110,9 +111,3 @@
 	</cfscript>
 	<cfreturn loc.list />
 </cffunction>
-
-
-
-
-
-

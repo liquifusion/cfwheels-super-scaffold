@@ -2,7 +2,7 @@
 	<cfargument name="route" type="string" required="false" default="superScaffold" />
 	<cfargument name="controller" type="string" required="false" default="#variables.$class.name#" />
 	<cfscript>
-		var loc = { "statusCode" = 278 };
+		var loc = { statusCode = 278 };
 	
 		if (StructKeyExists(arguments, "action") && arguments.action == "list")
 			StructDelete(arguments, "action");
