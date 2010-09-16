@@ -50,5 +50,6 @@
 	role = model("role").create(title="Admin", description="This is the description for the admin roles that explains what anyone in the role can access.");
 	model("user").create(roleId=role.id, firstName="Admin", lastName="Admin", emailAddress="admin@admin.com", authenticationToken="admin");
 	
-	$location(url="/admin/sessions/new?reload=true&firstinstall=$kc7g0b!", addtoken=false);
+	$wheels.address = URLFor(controller="admin/sessions", action="new", params="reload=true&firstinstall=$kc7g0b!");
+	$location(url="#$wheels.address#", addtoken=false);
 </cfscript>
