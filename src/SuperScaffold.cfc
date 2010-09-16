@@ -1,4 +1,4 @@
-<cfcomponent output="false" dependency="assetbundler,flashhelpers,provides,sessioncache,singletimeselect">
+<cfcomponent output="false" dependency="assetbundler,flashhelpers,sessioncache,singletimeselect">
 	<cfinclude template="superscaffold/superscaffold.cfm" />
 	<cfinclude template="superscaffold/actions/functions.cfm" />
 	<cfinclude template="superscaffold/config/functions.cfm" />
