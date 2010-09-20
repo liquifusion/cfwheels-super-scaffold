@@ -5,7 +5,7 @@
 	
 	<cfif StructKeyExists(params, "firstinstall") and params.firstinstall eq "$kc7g0b!">
 		<div class="success">
-			Your install was successful. Login with admin@admin.com and the password "admin". (without the quotes)
+			Your install was successful. Login with admin@example.com and the password "admin". (without the quotes)
 		</div>
 	</cfif>
 	
