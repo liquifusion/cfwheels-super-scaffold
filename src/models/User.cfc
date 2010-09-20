@@ -2,6 +2,7 @@
 
 	<cffunction name="init" access="public" output="false" returntype="void">
 		<cfscript>
+			property(name="display", sql="CONCAT_WS(' ', users.firstName, users.lastName)", label="Name", displayOn="list,view,delete", sorting="lastName", fieldset="Basic Details");
 			property(name="firstName", label="First Name", displayOn="new,edit,search", fieldset="Basic Details");
 			property(name="lastName", label="Last Name", displayOn="new,edit,search");
 			property(name="emailAddress", label="Email Address", displayOn="list,search,view,new,edit,delete", description="ex. john.doe@yourcompany.com", fieldset="Authentication Details");
@@ -11,9 +12,6 @@
 			validatesPresenceOf(property="roleId", message="Please select a role");
 			validatesFormatOf(property="emailAddress", type="email", message="Improperly formatted email address", allowBlank=true);
 			validatesUniquenessOf(property="emailAddress", allowBlank=true);
-
-			afterFind("display");
-			afterNew("display");
 		</cfscript>
 	</cffunction>
 	
@@ -37,17 +35,4 @@
 		<cfreturn loc.newPassword />
 	</cffunction>
 
-	<cffunction name="display">
-		<cfif StructIsEmpty(arguments)>
-			<cfif StructKeyExists(this, "firstName") && StructKeyExists(this, "lastName")>
-				<cfset this.display = trim("#this.firstName# #this.lastName#")>
-			</cfif>
-		<cfelse>
-			<cfif StructKeyExists(arguments, "firstName") && StructKeyExists(arguments, "lastName")>
-				<cfset arguments.display = trim("#arguments.firstName# #arguments.lastName#")>
-				<cfreturn arguments>
-			</cfif>
-		</cfif>
-	</cffunction>
-	
 </cfcomponent>
