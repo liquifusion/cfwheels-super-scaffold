@@ -8,6 +8,7 @@
 	<cfargument name="description" type="string" required="false" hint="Adds a description to the form field." />
 	<cfargument name="displayOn" type="string" required="false" default="list,view,new,edit,delete" hint="Adds a description to the form field." />
 	<cfargument name="sorting" type="string" required="false" />
+	<cfargument name="order" type="numeric" required="false" hint="overrides the order the property displayed" />
 	<cfscript>
 		var item = "";
 		var originalProperty = core.property;
@@ -81,17 +82,16 @@
 	<cfargument name="area" type="string" required="true" />
 	<cfscript>
 		var loc = { list = [] };
-		
+
 		// build the list of properties to display for the area passed in
 		for (loc.item in variables.wheels.class.mapping)
 		{
 			if (ListFindNoCase(variables.wheels.class.mapping[loc.item].displayOn, arguments.area))
 			{
-				loc.list[variables.wheels.class.mapping[loc.item].order] = variables.wheels.class.mapping[loc.item];
-				loc.list[variables.wheels.class.mapping[loc.item].order].property = loc.item;
-			}	
+				loc.list = $propertiesForArea(arguments.area, loc.item, variables.wheels.class.mapping[loc.item], loc.list);
+			}
 		}
-		
+
 		// also add in any associations that have displayOn
 		loc.keyList = StructKeyList(variables.wheels.class.associations);
 		for (loc.i = 1; loc.i lte ListLen(loc.keyList); loc.i++)
@@ -100,14 +100,77 @@
 			if (StructKeyExists(variables.wheels.class.associations[loc.item], "displayOn") && ListFindNoCase(variables.wheels.class.associations[loc.item].displayOn, arguments.area))
 			{
 				loc.a = $expandedAssociations(loc.item);
-				loc.list[variables.wheels.class.associations[loc.item].order] = loc.a[1];
-				loc.list[variables.wheels.class.associations[loc.item].order].property = loc.item;
+				loc.list = $propertiesForArea(arguments.area, loc.item, loc.a[1], loc.list);
 			}
 		}
-		
-		for (loc.i = ArrayLen(loc.list); loc.i gte 1; loc.i--)
-			if (!ArrayIsDefined(loc.list, loc.i))
-				ArrayDeleteAt(loc.list, loc.i);
+		loc.list = $reorderPropertiesForArea(arguments.area, loc.list);
 	</cfscript>
 	<cfreturn loc.list />
+</cffunction>
+
+<cffunction name="$propertiesForArea" access="public" returntype="array" output="false">
+	<cfargument name="area" type="string" required="true">
+	<cfargument name="name" type="string" required="true">
+	<cfargument name="data" type="struct" required="true">
+	<cfargument name="container" type="array" required="true">
+	<cfscript>
+	var loc = {};
+
+	arguments.data.property = arguments.name;
+
+	loc.position = $propertyOrderForArea(arguments.area, arguments.data);
+
+	if (loc.position gt ArrayLen(arguments.container))
+	{
+		ArrayResize(arguments.container, loc.position);
+	}
+
+	if (ArrayIsDefined(arguments.container, loc.position))
+	{
+		ArrayInsertAt(arguments.container, loc.position, arguments.data);
+	}
+	else
+	{
+		arguments.container[loc.position] = arguments.data;
+	}
+	</cfscript>
+	<cfreturn arguments.container>
+</cffunction>
+
+<cffunction name="$propertyOrderForArea" access="public" returntype="numeric" output="false">
+	<cfargument name="area" type="string" required="true">
+	<cfargument name="data" type="struct" required="true">
+	<cfscript>
+	// if order exists for the area, return that instead
+	if (StructKeyExists(arguments.data, "order#arguments.area#"))
+	{
+		return arguments.data["order#arguments.area#"];
+	}
+	</cfscript>
+	<cfreturn arguments.data.order>
+</cffunction>
+
+<cffunction name="$reorderPropertiesForArea" access="public" returntype="array" output="false">
+	<cfargument name="area" type="string" required="true">
+	<cfargument name="container" type="array" required="true">
+	<cfscript>
+	var loc = {};
+
+	loc.iEnd = ArrayLen(arguments.container);
+	for (loc.i = loc.iEnd; loc.i gte 1; loc.i--)
+	{
+		if (!ArrayIsDefined(arguments.container, loc.i))
+		{
+			ArrayDeleteAt(arguments.container, loc.i);
+		}
+	}
+
+	loc.iEnd = ArrayLen(arguments.container);
+	for (loc.i = 1; loc.i lte loc.iEnd; loc.i++)
+	{
+		arguments.container[loc.i].order = loc.i;
+		arguments.container[loc.i]["order#arguments.area#"] = loc.i;
+	}
+	</cfscript>
+	<cfreturn arguments.container>
 </cffunction>

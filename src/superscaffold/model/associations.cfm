@@ -31,12 +31,16 @@
 
 <cffunction name="$setupScaffoldAssociation" access="public" output="false" returntype="struct" mixin="model">
 	<cfargument name="displayOn" type="string" required="false" default="" hint="Adds a description to the form field." />
+	<cfargument name="order" type="any" required="false" hint="set to override the order in which the property displays in the scaffold" />
 	<cfscript>
 		if (!StructKeyExists(variables.wheels.class, "mappingcounter"))
 			variables.wheels.class.mappingcounter = 0;
 		variables.wheels.class.mappingcounter++;
-		arguments.order = variables.wheels.class.mappingcounter;
-
+		if (!StructKeyExists(arguments, "order"))
+		{
+			arguments.order = variables.wheels.class.mappingcounter;
+		}
+		
 		// setup the display on property
 		if (arguments.displayOn == "all")
 			arguments.displayOn = "list,search,view,new,edit,delete";
