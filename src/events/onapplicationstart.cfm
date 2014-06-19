@@ -22,7 +22,9 @@
 		  type="css"
 		, bundle="scaffold/bundles/ie"
 		, compress=true
-		, sources="scaffold/blueprint/ie");
+		, sources="
+			  scaffold/blueprint/ie
+			, scaffold/ie");
 	
 	generateBundle(
 		  type="css"
